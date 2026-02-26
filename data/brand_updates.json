@@ -1,0 +1,122 @@
+[
+  {
+    "id": "lv-show-2025-pre-fall",
+    "brand": "Louis Vuitton",
+    "group": "LVMH",
+    "type": "runway",
+    "title": "2025 早秋系列发布 · 巴黎 Left Bank 大秀",
+    "summary": "以建筑线条与金属细节回应城市夜色，男装与女装合并走秀，延续旅行叙事。",
+    "event_date": "2025-12-02",
+    "published_at": "2025-12-02T09:00:00Z",
+    "source": "品牌官网",
+    "link": "https://www.louisvuitton.com/news/pre-fall-2025"
+  },
+  {
+    "id": "gucci-ceo-2025",
+    "brand": "Gucci",
+    "group": "Kering",
+    "type": "business",
+    "title": "任命全新 CEO，聚焦高端化与零售效率",
+    "summary": "新管理层将重新梳理门店网络，强化核心包袋与经典图案资产。",
+    "event_date": "2025-11-18",
+    "published_at": "2025-11-18T10:30:00Z",
+    "source": "WWD",
+    "link": "https://wwd.com/business-news/gucci-new-ceo"
+  },
+  {
+    "id": "shein-popup-london",
+    "brand": "SHEIN",
+    "group": "Independent",
+    "type": "business",
+    "title": "宣布在伦敦开设快闪空间，测试线下触点",
+    "summary": "以数据驱动选品将线上爆款复制到线下，强调价格力与即时反馈。",
+    "event_date": "2025-11-05",
+    "published_at": "2025-11-05T14:20:00Z",
+    "source": "品牌官网",
+    "link": "https://shein.com/press/london-popup"
+  },
+  {
+    "id": "prada-resort-2026",
+    "brand": "Prada",
+    "group": "Prada Group",
+    "type": "collection",
+    "title": "2026 度假系列发布 · 米兰秀场",
+    "summary": "以轻盈材质与几何剪裁呈现度假氛围，强调实穿性与廓形实验。",
+    "event_date": "2025-11-28",
+    "published_at": "2025-11-28T16:00:00Z",
+    "source": "BOF",
+    "link": "https://www.businessoffashion.com/prada-resort-2026"
+  },
+  {
+    "id": "hermes-expansion-shanghai",
+    "brand": "Hermès",
+    "group": "Hermès",
+    "type": "business",
+    "title": "上海新店开业，扩大中国市场布局",
+    "summary": "位于静安区的全新旗舰店开业，展示品牌全系列产品与定制服务。",
+    "event_date": "2025-11-20",
+    "published_at": "2025-11-20T11:00:00Z",
+    "source": "品牌官网",
+    "link": "https://www.hermes.com/news/shanghai-store"
+  },
+  {
+    "id": "chanel-metiers-art-2025",
+    "brand": "Chanel",
+    "group": "Chanel",
+    "type": "runway",
+    "title": "2025 Métiers d'Art 工坊系列发布",
+    "summary": "致敬品牌传统手工艺，融合现代剪裁与经典元素，展现精湛工艺。",
+    "event_date": "2025-12-01",
+    "published_at": "2025-12-01T15:30:00Z",
+    "source": "品牌官网",
+    "link": "https://www.chanel.com/metiers-art-2025"
+  },
+  {
+    "id": "burberry-q3-earnings",
+    "brand": "Burberry",
+    "group": "Burberry Group",
+    "type": "business",
+    "title": "Q3 财报发布，亚太市场增长强劲",
+    "summary": "营收同比增长 12%，主要得益于中国与日本市场的复苏，以及数字化渠道的贡献。",
+    "event_date": "2025-11-15",
+    "published_at": "2025-11-15T08:00:00Z",
+    "source": "WWD",
+    "link": "https://wwd.com/business-news/burberry-q3-earnings"
+  },
+  {
+    "id": "dior-cruise-2026",
+    "brand": "Dior",
+    "group": "LVMH",
+    "type": "runway",
+    "title": "2026 早春度假系列发布 · 摩洛哥马拉喀什",
+    "summary": "以异域风情与法式优雅结合，呈现色彩丰富的度假系列，强调轻盈与流动性。",
+    "event_date": "2025-11-25",
+    "published_at": "2025-11-25T19:00:00Z",
+    "source": "BOF",
+    "link": "https://www.businessoffashion.com/dior-cruise-2026"
+  },
+  {
+    "id": "zara-sustainability-report",
+    "brand": "ZARA",
+    "group": "Inditex",
+    "type": "business",
+    "title": "发布 2025 可持续性报告，承诺 2030 年碳中和",
+    "summary": "宣布将使用更多再生材料，并优化供应链以减少环境影响。",
+    "event_date": "2025-11-10",
+    "published_at": "2025-11-10T10:15:00Z",
+    "source": "品牌官网",
+    "link": "https://www.zara.com/sustainability-2025"
+  },
+  {
+    "id": "jacquemus-collab-new",
+    "brand": "Jacquemus",
+    "group": "Independent",
+    "type": "collection",
+    "title": "宣布与某运动品牌联名合作",
+    "summary": "将品牌标志性的南法风格与运动功能性结合，预计 2026 年春季发布。",
+    "event_date": "2025-11-30",
+    "published_at": "2025-11-30T13:45:00Z",
+    "source": "Instagram",
+    "link": "https://instagram.com/jacquemus"
+  }
+]
