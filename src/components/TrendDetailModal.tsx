@@ -212,11 +212,12 @@ export function TrendDetailModal({ topic, isOpen, onClose }: TrendDetailModalPro
                         <p className="text-[11px] text-neutral-600 line-clamp-2">
                           {post.description}
                         </p>
-                        {(post.likes || post.comments) && (
-                          <div className="flex gap-3 mt-1 text-[10px] text-neutral-400">
-                            {post.likes > 0 && <span>❤ {(post.likes / 1000).toFixed(0)}k</span>}
-                            {post.comments > 0 && <span>💬 {(post.comments / 1000).toFixed(1)}k</span>}
-                          </div>
+                        {(post.likes ?? 0) > 0 || (post.comments ?? 0) > 0 ? (
+  <div className="flex gap-3 mt-1 text-[10px] text-neutral-400">
+    {(post.likes ?? 0) > 0 && <span>❤ {((post.likes ?? 0) / 1000).toFixed(0)}k</span>}
+    {(post.comments ?? 0) > 0 && <span>💬 {((post.comments ?? 0) / 1000).toFixed(1)}k</span>}
+  </div>
+) : null}
                         )}
                       </div>
                     </a>
