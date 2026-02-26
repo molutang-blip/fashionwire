@@ -106,7 +106,7 @@ export default function HomePage() {
 
       {/* Global Fashion Trending + Brand Intelligence */}
       <section id="trending" className="grid gap-6 lg:grid-cols-[1.3fr,1.1fr] items-start">
-        <TrendingSection topics={MOCK_TRENDING} maxVisible={5} />
+       <TrendingSection topics={MOCK_TRENDING} />
         <BrandUpdatesSection updates={MOCK_BRAND_UPDATES} maxVisible={5} />
       </section>
 
