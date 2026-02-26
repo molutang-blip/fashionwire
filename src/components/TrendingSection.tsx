@@ -6,8 +6,8 @@ import { FavoriteToggle } from './FavoriteToggle';
 import { TrendDetailModal } from './TrendDetailModal';
 import trendingDetailsRaw from '../../data/trending_details.json';
 const trendingDetails = trendingDetailsRaw as Record<string, Omit<TrendingTopicDetail, keyof TrendingTopic>>;
-
-interface TrendingSectionProps {
+// 类型断言 - 使用 unknown 中间类型绕过严格检查
+const trendingDetails = trendingDetailsRaw as unknown as Record<string, Omit<TrendingTopicDetail, keyof TrendingTopic>>;
   topics: TrendingTopic[];
 }
 
