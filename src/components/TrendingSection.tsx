@@ -16,14 +16,16 @@ function DirectionIcon({ direction }: { direction: TrendingTopic["direction"] })
 
 export function TrendingSection({ topics }: TrendingSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // 只取前10条
   const displayTopics = topics.slice(0, 10);
 
   return (
     <div className="editor-card h-full flex flex-col">
       <div className="flex items-center justify-between mb-2">
-        <h2 className="section-title mb-0">
-          🔥 全球时尚热榜
-          <span className="text-xs font-normal text-neutral-500 ml-1">Global Fashion Trending</span>
+        <h2 className="section-title mb-0 flex items-baseline gap-1">
+          <span>🔥 全球时尚热榜</span>
+          <span className="text-xs font-normal text-neutral-500">Global Fashion Trending</span>
         </h2>
         <div className="hidden sm:flex gap-2 text-[11px] text-neutral-600">
           <button className="pill-tab">All</button>
@@ -36,21 +38,31 @@ export function TrendingSection({ topics }: TrendingSectionProps) {
         过去 24 小时社交媒体与搜索平台上被频繁提及的时尚事件 / 人物 / 话题
       </p>
 
+      {/* 可滚动区域 - 鼠标悬停时可滚动 */}
       <div
         ref={scrollRef}
-        className="divide-y divide-neutral-100 flex-1 overflow-y-auto"
+        className="divide-y divide-neutral-100 flex-1 overflow-y-auto scrollbar-hide hover:scrollbar-show"
         style={{
           maxHeight: '320px',
           scrollbarWidth: 'thin',
-          scrollbarColor: 'transparent transparent'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.scrollbarColor = '#d4d4d4 transparent';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.scrollbarColor = 'transparent transparent';
+          scrollbarColor: '#d4d4d4 transparent'
         }}
       >
+        <style jsx>{`
+          div::-webkit-scrollbar {
+            width: 4px;
+          }
+          div::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          div::-webkit-scrollbar-thumb {
+            background-color: #d4d4d4;
+            border-radius: 4px;
+          }
+          div:not(:hover)::-webkit-scrollbar-thumb {
+            background-color: transparent;
+          }
+        `}</style>
         {displayTopics.map((topic, index) => (
           <article
             key={topic.id}
@@ -86,6 +98,7 @@ export function TrendingSection({ topics }: TrendingSectionProps) {
         ))}
       </div>
 
+      {/* 底部提示 */}
       <div className="mt-2 pt-2 border-t border-neutral-100 text-center">
         <p className="text-[10px] text-neutral-400">
           ↕ 鼠标悬停可滚动查看全部 {displayTopics.length} 条
