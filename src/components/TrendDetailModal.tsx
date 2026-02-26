@@ -82,8 +82,9 @@ export function TrendDetailModal({ topic, isOpen, onClose }: TrendDetailModalPro
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-xl max-h-[85vh] overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-300">
-        {/* 头部 */}
+      <div
+        className="bg-white rounded-xl shadow-2xl w-full max-w-xl max-h-[85vh] overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-300"
+      >
         <div className="px-6 py-4 border-b border-neutral-100">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -116,9 +117,7 @@ export function TrendDetailModal({ topic, isOpen, onClose }: TrendDetailModalPro
           </div>
         </div>
 
-        {/* 可滚动内容区域 */}
         <div className="flex-1 overflow-y-auto px-6 py-4 space-y-5">
-          {/* 跨平台热度分布 */}
           <section>
             <h3 className="flex items-center gap-2 text-sm font-medium text-neutral-900 mb-3">
               <span>📊</span>
@@ -128,7 +127,6 @@ export function TrendDetailModal({ topic, isOpen, onClose }: TrendDetailModalPro
             <PlatformBreakdownChart breakdown={topic.platformBreakdown} />
           </section>
 
-          {/* 关键洞察 */}
           <section>
             <h3 className="flex items-center gap-2 text-sm font-medium text-neutral-900 mb-2">
               <span>💡</span>
@@ -137,12 +135,11 @@ export function TrendDetailModal({ topic, isOpen, onClose }: TrendDetailModalPro
             </h3>
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-lg p-4">
               <p className="text-sm text-neutral-700 leading-relaxed">
-                "{topic.keyInsight}"
+                &quot;{topic.keyInsight}&quot;
               </p>
             </div>
           </section>
 
-          {/* 谁在带这个风 */}
           {topic.trendDrivers && topic.trendDrivers.length > 0 && (
             <section>
               <h3 className="flex items-center gap-2 text-sm font-medium text-neutral-900 mb-3">
@@ -176,7 +173,6 @@ export function TrendDetailModal({ topic, isOpen, onClose }: TrendDetailModalPro
             </section>
           )}
 
-          {/* 精选内容 */}
           {topic.curatedPosts && topic.curatedPosts.length > 0 && (
             <section>
               <h3 className="flex items-center gap-2 text-sm font-medium text-neutral-900 mb-3">
@@ -213,12 +209,11 @@ export function TrendDetailModal({ topic, isOpen, onClose }: TrendDetailModalPro
                           {post.description}
                         </p>
                         {(post.likes ?? 0) > 0 || (post.comments ?? 0) > 0 ? (
-  <div className="flex gap-3 mt-1 text-[10px] text-neutral-400">
-    {(post.likes ?? 0) > 0 && <span>❤ {((post.likes ?? 0) / 1000).toFixed(0)}k</span>}
-    {(post.comments ?? 0) > 0 && <span>💬 {((post.comments ?? 0) / 1000).toFixed(1)}k</span>}
-  </div>
-) : null}
-                        )}
+                          <div className="flex gap-3 mt-1 text-[10px] text-neutral-400">
+                            {(post.likes ?? 0) > 0 && <span>❤ {((post.likes ?? 0) / 1000).toFixed(0)}k</span>}
+                            {(post.comments ?? 0) > 0 && <span>💬 {((post.comments ?? 0) / 1000).toFixed(1)}k</span>}
+                          </div>
+                        ) : null}
                       </div>
                     </a>
                   );
@@ -228,7 +223,6 @@ export function TrendDetailModal({ topic, isOpen, onClose }: TrendDetailModalPro
           )}
         </div>
 
-        {/* 底部操作栏 */}
         <div className="px-6 py-3 border-t border-neutral-100 bg-neutral-50 flex items-center justify-between gap-3">
           <button className="flex items-center gap-1.5 px-4 py-2 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-white rounded-lg transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
