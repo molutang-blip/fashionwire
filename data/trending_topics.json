@@ -1,0 +1,112 @@
+[
+  {
+    "id": "1",
+    "title_zh": "Met Gala 红毯造型",
+    "title_en": "Met Gala Red Carpet Looks",
+    "type": "event",
+    "sources": "Instagram, TikTok",
+    "score": 97,
+    "direction": "up",
+    "time_window": "24h",
+    "updated_at": "2025-12-02T10:15:00Z"
+  },
+  {
+    "id": "2",
+    "title_zh": "巴黎时装周开幕日秀场街拍",
+    "title_en": "Paris Fashion Week Street Style",
+    "type": "event",
+    "sources": "Xiaohongshu, Weibo",
+    "score": 91,
+    "direction": "up",
+    "time_window": "24h",
+    "updated_at": "2025-12-02T09:45:00Z"
+  },
+  {
+    "id": "3",
+    "title_zh": "某奢侈品牌 CEO 离任传闻",
+    "title_en": "Rumors on Luxury CEO Departure",
+    "type": "person",
+    "sources": "Google, Weibo",
+    "score": 86,
+    "direction": "flat",
+    "time_window": "24h",
+    "updated_at": "2025-12-02T08:30:00Z"
+  },
+  {
+    "id": "4",
+    "title_zh": "Zendaya 最新杂志封面造型",
+    "title_en": "Zendaya Latest Magazine Cover",
+    "type": "person",
+    "sources": "Instagram, TikTok, Xiaohongshu",
+    "score": 89,
+    "direction": "up",
+    "time_window": "realtime",
+    "updated_at": "2025-12-02T11:20:00Z"
+  },
+  {
+    "id": "5",
+    "title_zh": "2025 秋冬趋势预测：长款大衣回归",
+    "title_en": "2025 Fall/Winter Trend: Maxi Coats Return",
+    "type": "topic",
+    "sources": "Google, Instagram, Xiaohongshu",
+    "score": 84,
+    "direction": "up",
+    "time_window": "7d",
+    "updated_at": "2025-12-02T07:15:00Z"
+  },
+  {
+    "id": "6",
+    "title_zh": "Bella Hadid 街拍穿搭解析",
+    "title_en": "Bella Hadid Street Style Breakdown",
+    "type": "person",
+    "sources": "Instagram, TikTok",
+    "score": 82,
+    "direction": "flat",
+    "time_window": "24h",
+    "updated_at": "2025-12-02T06:45:00Z"
+  },
+  {
+    "id": "7",
+    "title_zh": "快时尚品牌可持续性承诺",
+    "title_en": "Fast Fashion Sustainability Commitments",
+    "type": "topic",
+    "sources": "Google, Weibo",
+    "score": 78,
+    "direction": "up",
+    "time_window": "7d",
+    "updated_at": "2025-12-01T18:30:00Z"
+  },
+  {
+    "id": "8",
+    "title_zh": "米兰时装周日程公布",
+    "title_en": "Milan Fashion Week Schedule Announced",
+    "type": "event",
+    "sources": "Instagram, Google",
+    "score": 75,
+    "direction": "up",
+    "time_window": "24h",
+    "updated_at": "2025-12-02T05:20:00Z"
+  },
+  {
+    "id": "9",
+    "title_zh": "二手奢侈品转售平台融资",
+    "title_en": "Luxury Resale Platform Funding",
+    "type": "topic",
+    "sources": "Google, Weibo",
+    "score": 73,
+    "direction": "flat",
+    "time_window": "7d",
+    "updated_at": "2025-12-01T14:10:00Z"
+  },
+  {
+    "id": "10",
+    "title_zh": "Kendall Jenner 新品牌发布",
+    "title_en": "Kendall Jenner New Brand Launch",
+    "type": "person",
+    "sources": "Instagram, TikTok, Xiaohongshu",
+    "score": 88,
+    "direction": "up",
+    "time_window": "realtime",
+    "updated_at": "2025-12-02T12:00:00Z"
+  }
+]
