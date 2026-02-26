@@ -6,6 +6,7 @@ import type {
   TrendSource
 } from "@/domain/types";
 import { TodayAngle } from "@/components/TodayAngle";
+import { DailyBriefing } from "@/components/DailyBriefing";
 import { TrendingSection } from "@/components/TrendingSection";
 import { BrandUpdatesSection } from "@/components/BrandUpdatesSection";
 import { HotItemsSection } from "@/components/HotItemsSection";
@@ -85,63 +86,21 @@ const MOCK_KEYWORDS: StyleKeyword[] = (styleKeywordsRaw as any[]).map((item) => 
   };
 });
 
+const DAILY_BRIEFING_DATA = {
+  hotTopic: "Met Gala 红毯造型",
+  hotTopicSource: "Social / Search",
+  styleKeyword: "安静奢华",
+  styleKeywordEn: "Quiet Luxury",
+  hotCategory: "红色高跟鞋 · 轻奢包袋",
+  focusArea: "奢侈品牌女装 / 包袋"
+};
+
 export default function HomePage() {
   return (
     <div className="space-y-8 lg:space-y-10">
-      {/* Hero */}
+      {/* Hero: Daily Briefing + Today Angle */}
       <section className="grid gap-6 lg:grid-cols-[1.6fr,1.1fr] items-stretch">
-        <div className="editor-card h-full flex flex-col">
-          <div className="badge mb-3">Daily Briefing · 当日总览</div>
-          <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl tracking-tight leading-snug mb-3">
-            今天的全球时尚长什么样？
-          </h1>
-          <p className="text-sm sm:text-[15px] text-neutral-700 leading-relaxed mb-4 max-w-xl">
-            基于过去 24 小时的社交讨论、搜索趋势与电商信号，我们为你汇总出今日最值得关注的事件、品牌动向与风格情绪。
-          </p>
-          <div className="grid grid-cols-2 gap-4 text-[11px] text-neutral-600 max-w-xl mt-auto">
-            <div>
-              <p className="uppercase tracking-wide mb-1 text-neutral-500">
-                今日最高热度话题
-              </p>
-              <p className="text-neutral-900">
-                Met Gala 红毯造型
-                <span className="ml-1 text-neutral-500 text-[10px]">
-                  · Social / Search
-                </span>
-              </p>
-            </div>
-            <div>
-              <p className="uppercase tracking-wide mb-1 text-neutral-500">
-                上升最快风格关键词
-              </p>
-              <p className="text-neutral-900">
-                安静奢华
-                <span className="ml-1 text-neutral-500 text-[10px]">
-                  Quiet Luxury
-                </span>
-              </p>
-            </div>
-            <div>
-              <p className="uppercase tracking-wide mb-1 text-neutral-500">
-                电商侧爆发品类
-              </p>
-              <p className="text-neutral-900">
-                红色高跟鞋 · 轻奢包袋
-              </p>
-            </div>
-            <div>
-              <p className="uppercase tracking-wide mb-1 text-neutral-500">
-                适合你的今日焦点
-              </p>
-              <p className="text-neutral-900">
-                奢侈品牌女装 / 包袋
-                <span className="ml-1 text-neutral-500 text-[10px]">
-                  （后续将结合你的偏好自动生成）
-                </span>
-              </p>
-            </div>
-          </div>
-        </div>
+        <DailyBriefing data={DAILY_BRIEFING_DATA} />
         <TodayAngle />
       </section>
 
