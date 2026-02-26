@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef } from 'react';
 import type { BrandUpdate } from '@/domain/types';
 import { FavoriteToggle } from './FavoriteToggle';
 
@@ -10,16 +10,17 @@ interface BrandUpdatesSectionProps {
 }
 
 export function BrandUpdatesSection({ updates, maxVisible = 5 }: BrandUpdatesSectionProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const displayUpdates = isExpanded ? updates : updates.slice(0, maxVisible);
-  const hasMore = updates.length > maxVisible;
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // 只取前10条
+  const displayUpdates = updates.slice(0, 10);
 
   return (
     <div id="brands" className="editor-card h-full flex flex-col">
       <div className="flex items-center justify-between mb-2">
         <h2 className="section-title mb-0">
           🏢 品牌动态
-          <span className="text-xs font-normal text-neutral-500">
+          <span className="text-xs font-normal text-neutral-500 ml-1">
             Brand Intelligence
           </span>
         </h2>
@@ -28,7 +29,32 @@ export function BrandUpdatesSection({ updates, maxVisible = 5 }: BrandUpdatesSec
       <p className="text-[11px] text-neutral-500 mb-2">
         汇总全球重点品牌的秀场发布与商业动向，按时间排序，帮助你快速浏览行业「今天在发生什么」。
       </p>
-      <div className="space-y-1.5 text-[11px] text-neutral-700 flex-1 overflow-hidden">
+
+      {/* 可滚动区域 - 鼠标悬停时可滚动 */}
+      <div
+        ref={scrollRef}
+        className="space-y-1.5 text-[11px] text-neutral-700 flex-1 overflow-y-auto scrollbar-hide hover:scrollbar-show"
+        style={{
+          maxHeight: '320px',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#d4d4d4 transparent'
+        }}
+      >
+        <style jsx>{`
+          div::-webkit-scrollbar {
+            width: 4px;
+          }
+          div::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          div::-webkit-scrollbar-thumb {
+            background-color: #d4d4d4;
+            border-radius: 4px;
+          }
+          div:not(:hover)::-webkit-scrollbar-thumb {
+            background-color: transparent;
+          }
+        `}</style>
         {displayUpdates.map((item) => (
           <article
             key={item.id}
@@ -72,30 +98,12 @@ export function BrandUpdatesSection({ updates, maxVisible = 5 }: BrandUpdatesSec
         ))}
       </div>
 
-      {hasMore && (
-        <div className="mt-2 pt-2 border-t border-neutral-100">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full flex items-center justify-center gap-1 text-[11px] text-neutral-500 hover:text-neutral-700 transition-colors py-1"
-          >
-            {isExpanded ? (
-              <>
-                收起
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                </svg>
-              </>
-            ) : (
-              <>
-                展开更多 ({updates.length - maxVisible} 条)
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </>
-            )}
-          </button>
-        </div>
-      )}
+      {/* 底部提示 */}
+      <div className="mt-2 pt-2 border-t border-neutral-100 text-center">
+        <p className="text-[10px] text-neutral-400">
+          ↕ 鼠标悬停可滚动查看全部 {displayUpdates.length} 条
+        </p>
+      </div>
     </div>
   );
 }
