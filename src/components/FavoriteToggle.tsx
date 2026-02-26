@@ -1,7 +1,8 @@
 'use client';
 
-import { useFavorites } from "@/hooks/useFavorites";
+import { cn } from "@/lib/utils";
 import type { FavoriteKind } from "@/domain/types";
+import { useFavorites } from "@/hooks/useFavorites";
 
 interface FavoriteToggleProps {
   id: string;
@@ -14,17 +15,33 @@ export function FavoriteToggle({ id, kind, label, meta }: FavoriteToggleProps) {
   const { isFavorited, toggleFavorite } = useFavorites();
   const active = isFavorited(kind, id);
 
+  const handleClick = () => {
+    toggleFavorite({
+      id,
+      kind,
+      createdAt: new Date().toISOString(),
+      ...(kind === "trending"
+        ? { titleZh: label, titleEn: meta ?? "" }
+        : kind === "brandUpdate"
+        ? { brand: meta ?? "", title: label }
+        : { brand: meta ?? "", name: label, imageUrl: "" })
+    } as any);
+  };
+
   return (
     <button
-      onClick={() =>
-        toggleFavorite({ id, kind, label, meta, createdAt: new Date().toISOString() })
-      }
-      className={`text-base transition-colors ${
-        active ? "text-rose-500" : "text-neutral-300 hover:text-neutral-500"
-      }`}
-      aria-label={active ? "取消收藏" : "收藏"}
+      type="button"
+      aria-pressed={active}
+      onClick={handleClick}
+      className={cn(
+        "inline-flex items-center justify-center rounded-full border px-2.5 py-1 text-[11px] transition-colors",
+        active
+          ? "border-brand bg-brand text-white"
+          : "border-neutral-300 text-neutral-500 hover:bg-neutral-100"
+      )}
     >
-      {active ? "★" : "☆"}
+      <span className="mr-1">{active ? "♥" : "♡"}</span>
+      <span>收藏</span>
     </button>
   );
 }
