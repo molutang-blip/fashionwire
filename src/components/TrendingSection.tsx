@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import type { TrendingTopic, TrendingTopicDetail } from '@/domain/types';
 import { FavoriteToggle } from './FavoriteToggle';
 import { TrendDetailModal } from './TrendDetailModal';
-import trendingDetailsRaw from '../../data/trending_details.json';
+import trendingDetailsRaw from '../../../data/trending_details.json';
 
 const trendingDetails = trendingDetailsRaw as Record<string, Omit<TrendingTopicDetail, keyof TrendingTopic>>;
 
