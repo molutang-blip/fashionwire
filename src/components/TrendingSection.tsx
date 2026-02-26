@@ -5,9 +5,11 @@ import type { TrendingTopic, TrendingTopicDetail } from '@/domain/types';
 import { FavoriteToggle } from './FavoriteToggle';
 import { TrendDetailModal } from './TrendDetailModal';
 import trendingDetailsRaw from '../../data/trending_details.json';
-const trendingDetails = trendingDetailsRaw as Record<string, Omit<TrendingTopicDetail, keyof TrendingTopic>>;
+
 // 类型断言 - 使用 unknown 中间类型绕过严格检查
 const trendingDetails = trendingDetailsRaw as unknown as Record<string, Omit<TrendingTopicDetail, keyof TrendingTopic>>;
+
+interface TrendingSectionProps {
   topics: TrendingTopic[];
 }
 
@@ -22,8 +24,10 @@ export function TrendingSection({ topics }: TrendingSectionProps) {
   const [selectedTopic, setSelectedTopic] = useState<TrendingTopicDetail | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // 只取前10条
   const displayTopics = topics.slice(0, 10);
 
+  // 点击词条时，合并基础数据和详情数据
   const handleTopicClick = (topic: TrendingTopic) => {
     const detail = trendingDetails[topic.id];
     if (detail) {
@@ -55,6 +59,7 @@ export function TrendingSection({ topics }: TrendingSectionProps) {
           过去 24 小时社交媒体与搜索平台上被频繁提及的时尚事件 / 人物 / 话题
         </p>
 
+        {/* 可滚动区域 - 鼠标悬停时可滚动 */}
         <div
           ref={scrollRef}
           className="divide-y divide-neutral-100 flex-1 overflow-y-auto scrollbar-hide hover:scrollbar-show"
@@ -117,6 +122,7 @@ export function TrendingSection({ topics }: TrendingSectionProps) {
           ))}
         </div>
 
+        {/* 底部提示 */}
         <div className="mt-2 pt-2 border-t border-neutral-100 text-center">
           <p className="text-[10px] text-neutral-400">
             ↕ 鼠标悬停可滚动查看全部 {displayTopics.length} 条 · 点击词条查看详情
@@ -124,6 +130,7 @@ export function TrendingSection({ topics }: TrendingSectionProps) {
         </div>
       </div>
 
+      {/* 详情弹窗 */}
       <TrendDetailModal
         topic={selectedTopic}
         isOpen={isModalOpen}
