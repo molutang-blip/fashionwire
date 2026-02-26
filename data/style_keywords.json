@@ -1,0 +1,152 @@
+[
+  {
+    "id": "quiet-luxury",
+    "keyword_zh": "安静奢华",
+    "keyword_en": "Quiet Luxury",
+    "category": "style",
+    "frequency": 1870,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, TikTok, Xiaohongshu, Google"
+  },
+  {
+    "id": "maxi-coat",
+    "keyword_zh": "长款大衣",
+    "keyword_en": "Maxi Coat",
+    "category": "silhouette",
+    "frequency": 960,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, Xiaohongshu, Google"
+  },
+  {
+    "id": "scarlet-red",
+    "keyword_zh": "猩红红",
+    "keyword_en": "Scarlet Red",
+    "category": "color",
+    "frequency": 740,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "TikTok, Xiaohongshu, Google"
+  },
+  {
+    "id": "oversized-blazer",
+    "keyword_zh": "廓形西装",
+    "keyword_en": "Oversized Blazer",
+    "category": "silhouette",
+    "frequency": 680,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, Xiaohongshu"
+  },
+  {
+    "id": "cashmere",
+    "keyword_zh": "羊绒",
+    "keyword_en": "Cashmere",
+    "category": "fabric",
+    "frequency": 620,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, Xiaohongshu, Google"
+  },
+  {
+    "id": "minimal-tailoring",
+    "keyword_zh": "极简剪裁",
+    "keyword_en": "Minimal Tailoring",
+    "category": "style",
+    "frequency": 580,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, Google"
+  },
+  {
+    "id": "sneaker-luxury",
+    "keyword_zh": "奢侈运动鞋",
+    "keyword_en": "Luxury Sneakers",
+    "category": "style",
+    "frequency": 540,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "TikTok, Instagram, Xiaohongshu"
+  },
+  {
+    "id": "no-logo",
+    "keyword_zh": "无 Logo",
+    "keyword_en": "No Logo",
+    "category": "style",
+    "frequency": 520,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, Xiaohongshu, Google"
+  },
+  {
+    "id": "boxy-silhouette",
+    "keyword_zh": "箱型廓形",
+    "keyword_en": "Boxy Silhouette",
+    "category": "silhouette",
+    "frequency": 480,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, Xiaohongshu"
+  },
+  {
+    "id": "burgundy",
+    "keyword_zh": "勃艮第红",
+    "keyword_en": "Burgundy",
+    "category": "color",
+    "frequency": 450,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "TikTok, Instagram, Xiaohongshu"
+  },
+  {
+    "id": "tailored-trousers",
+    "keyword_zh": "剪裁长裤",
+    "keyword_en": "Tailored Trousers",
+    "category": "silhouette",
+    "frequency": 420,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, Google"
+  },
+  {
+    "id": "silk-scarf",
+    "keyword_zh": "真丝围巾",
+    "keyword_en": "Silk Scarf",
+    "category": "accessory",
+    "frequency": 390,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, Xiaohongshu"
+  },
+  {
+    "id": "neutral-tones",
+    "keyword_zh": "中性色调",
+    "keyword_en": "Neutral Tones",
+    "category": "color",
+    "frequency": 370,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, Google, Xiaohongshu"
+  },
+  {
+    "id": "structured-handbag",
+    "keyword_zh": "结构感手袋",
+    "keyword_en": "Structured Handbag",
+    "category": "accessory",
+    "frequency": 350,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, TikTok, Xiaohongshu"
+  },
+  {
+    "id": "relaxed-fit",
+    "keyword_zh": "宽松版型",
+    "keyword_en": "Relaxed Fit",
+    "category": "silhouette",
+    "frequency": 330,
+    "period_start": "2025-11-25",
+    "period_end": "2025-12-01",
+    "sources": "Instagram, Xiaohongshu"
+  }
+]
