@@ -8,31 +8,75 @@ export type TrendSource =
   | "amazon"
   | "taobao";
 
+export type TrendDirection = "up" | "down" | "flat";
+
 export interface TrendingTopic {
   id: string;
   titleZh: string;
   titleEn: string;
   score: number;
   sourceLabel: string;
-  direction: "up" | "down" | "flat";
+  direction: TrendDirection;
   timestamp: string;
 }
+
+// 扩展的趋势详情类型（用于弹窗展示）
+export interface PlatformBreakdown {
+  platform: TrendSource;
+  percentage: number;
+  count: number;
+}
+
+export interface TrendDriver {
+  id: string;
+  name: string;
+  avatar: string;
+  role: "celebrity" | "kol" | "brand" | "media";
+  platform?: string;
+}
+
+export interface CuratedPost {
+  id: string;
+  thumbnail: string;
+  platform: TrendSource;
+  description: string;
+  externalUrl: string;
+  likes?: number;
+  comments?: number;
+}
+
+export interface TrendingTopicDetail extends TrendingTopic {
+  platformBreakdown: PlatformBreakdown[];
+  keyInsight: string;
+  trendDrivers: TrendDriver[];
+  curatedPosts: CuratedPost[];
+}
+
+export type BrandUpdateType = "runway" | "collection" | "business";
 
 export interface BrandUpdate {
   id: string;
   brand: string;
   group: string;
-  type: "runway" | "collection" | "business";
+  type: BrandUpdateType;
   title: string;
   date: string;
   summary: string;
 }
 
+export type HotItemCategory =
+  | "clothing"
+  | "bag"
+  | "shoes"
+  | "accessory"
+  | "jewellery"
+  | "other";
+
 export interface HotItem {
   id: string;
   brand: string;
   name: string;
-  category: string;
+  category: HotItemCategory;
   price: number;
   currency: string;
   imageUrl: string;
@@ -45,33 +89,37 @@ export interface StyleKeyword {
   keywordZh: string;
   keywordEn: string;
   frequency: number;
-  sources: { source: TrendSource; count: number }[];
+  sources: {
+    source: TrendSource;
+    count: number;
+  }[];
 }
 
 export type FavoriteKind = "trending" | "brandUpdate" | "hotItem";
 
-export interface FavoriteTrending {
+export interface FavoriteEntryBase {
+  id: string;
+  kind: FavoriteKind;
+  createdAt: string;
+}
+
+export interface FavoriteTrending extends FavoriteEntryBase {
   kind: "trending";
-  id: string;
-  label: string;
-  meta?: string;
-  createdAt: string;
+  titleZh: string;
+  titleEn: string;
 }
 
-export interface FavoriteBrandUpdate {
+export interface FavoriteBrandUpdate extends FavoriteEntryBase {
   kind: "brandUpdate";
-  id: string;
-  label: string;
-  meta?: string;
-  createdAt: string;
+  brand: string;
+  title: string;
 }
 
-export interface FavoriteHotItem {
+export interface FavoriteHotItem extends FavoriteEntryBase {
   kind: "hotItem";
-  id: string;
-  label: string;
-  meta?: string;
-  createdAt: string;
+  brand: string;
+  name: string;
+  imageUrl: string;
 }
 
 export type FavoriteEntry =
