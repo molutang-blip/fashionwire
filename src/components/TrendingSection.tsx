@@ -1,13 +1,13 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import type { TrendingTopic, TrendingTopicDetail } from '@/domain/types';
+import type { TrendingTopic, TrendingTopicDetailEnhanced } from '@/domain/types';
 import { FavoriteToggle } from './FavoriteToggle';
-import { TrendDetailModal } from './TrendDetailModal';
-import trendingDetailsRaw from '../../data/trending_details.json';
+import { TrendDetailModalEnhanced } from './TrendDetailModalEnhanced';
+import trendingDetailsEnhancedRaw from '../../data/trending_details_enhanced.json';
 
 // 类型断言 - 使用 unknown 中间类型绕过严格检查
-const trendingDetails = trendingDetailsRaw as unknown as Record<string, Omit<TrendingTopicDetail, keyof TrendingTopic>>;
+const trendingDetailsEnhanced = trendingDetailsEnhancedRaw as unknown as Record<string, Omit<TrendingTopicDetailEnhanced, keyof TrendingTopic>>;
 
 interface TrendingSectionProps {
   topics: TrendingTopic[];
@@ -21,7 +21,7 @@ function DirectionIcon({ direction }: { direction: TrendingTopic["direction"] })
 
 export function TrendingSection({ topics }: TrendingSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [selectedTopic, setSelectedTopic] = useState<TrendingTopicDetail | null>(null);
+  const [selectedTopic, setSelectedTopic] = useState<TrendingTopicDetailEnhanced | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 只取前10条
@@ -29,9 +29,9 @@ export function TrendingSection({ topics }: TrendingSectionProps) {
 
   // 点击词条时，合并基础数据和详情数据
   const handleTopicClick = (topic: TrendingTopic) => {
-    const detail = trendingDetails[topic.id];
+    const detail = trendingDetailsEnhanced[topic.id];
     if (detail) {
-      const fullTopic: TrendingTopicDetail = {
+      const fullTopic: TrendingTopicDetailEnhanced = {
         ...topic,
         ...detail,
       };
@@ -130,8 +130,8 @@ export function TrendingSection({ topics }: TrendingSectionProps) {
         </div>
       </div>
 
-      {/* 详情弹窗 */}
-      <TrendDetailModal
+      {/* 增强版详情弹窗 */}
+      <TrendDetailModalEnhanced
         topic={selectedTopic}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
