@@ -1,0 +1,334 @@
+{
+  "1": {
+    "timeline": {
+      "dataPoints": [
+        { "date": "2025-01-09", "heatValue": 12, "engagementCount": 45000, "postCount": 120 },
+        { "date": "2025-01-10", "heatValue": 28, "engagementCount": 89000, "postCount": 340 },
+        { "date": "2025-01-11", "heatValue": 45, "engagementCount": 156000, "postCount": 780 },
+        { "date": "2025-01-12", "heatValue": 89, "engagementCount": 420000, "postCount": 2100 },
+        { "date": "2025-01-13", "heatValue": 100, "engagementCount": 680000, "postCount": 3500 },
+        { "date": "2025-01-14", "heatValue": 92, "engagementCount": 520000, "postCount": 2800 },
+        { "date": "2025-01-15", "heatValue": 78, "engagementCount": 380000, "postCount": 1900 }
+      ],
+      "events": [
+        { "id": "e1-1", "date": "2025-01-10", "type": "first_post", "title": "深夜徐老师首发", "description": "小红书首发 Met Gala 预告分析", "relatedDriverId": "d3" },
+        { "id": "e1-2", "date": "2025-01-12", "type": "celebrity_join", "title": "Zendaya 官宣造型", "description": "Instagram 官宣机械裙装造型", "relatedDriverId": "d1" },
+        { "id": "e1-3", "date": "2025-01-13", "type": "peak_point", "title": "热度峰值", "description": "红毯直播期间达到最高热度" },
+        { "id": "e1-4", "date": "2025-01-14", "type": "brand_response", "title": "Margiela 回应", "description": "品牌官方发布幕后制作视频", "relatedDriverId": "d4" }
+      ]
+    },
+    "platformBreakdown": [
+      { "platform": "instagram", "percentage": 35, "count": 125000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "tiktok", "percentage": 28, "count": 98000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T07:30:00Z" },
+      { "platform": "xiaohongshu", "percentage": 20, "count": 72000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T06:00:00Z" },
+      { "platform": "google", "percentage": 10, "count": 35000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "taobao", "percentage": 7, "count": 24000, "dataSource": "estimated", "lastUpdated": "2025-01-15T04:00:00Z" }
+    ],
+    "keyInsight": "社交平台讨论集中在 Zendaya 的机械裙装和 Bad Bunny 的全白造型，电商侧「红毯同款」搜索量激增 200%，其中银色金属配饰最受关注。",
+    "trendDrivers": [
+      { "id": "d1", "name": "Zendaya", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=zendaya", "role": "celebrity", "platform": "instagram", "firstPostTime": "2025-01-12T18:30:00Z", "postCount": 3, "engagementTotal": 8500000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/zendaya-preview/200/200" } },
+      { "id": "d2", "name": "Bad Bunny", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=badbunny", "role": "celebrity", "platform": "instagram", "firstPostTime": "2025-01-12T19:00:00Z", "postCount": 2, "engagementTotal": 4200000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/badbunny-preview/200/200" } },
+      { "id": "d3", "name": "深夜徐老师", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=xulao", "role": "kol", "platform": "xiaohongshu", "firstPostTime": "2025-01-10T22:00:00Z", "postCount": 8, "engagementTotal": 320000, "isFirstMover": true, "previewContent": { "type": "text", "text": "Met Gala 2025 看点预测：机械美学将成主角..." } },
+      { "id": "d4", "name": "Maison Margiela", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=margiela", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-14T10:00:00Z", "postCount": 5, "engagementTotal": 890000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/margiela-preview/200/200" } },
+      { "id": "d5", "name": "Vogue", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=vogue", "role": "media", "platform": "instagram", "firstPostTime": "2025-01-12T20:00:00Z", "postCount": 15, "engagementTotal": 2100000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/vogue-preview/200/200" } }
+    ],
+    "curatedPosts": [
+      { "id": "p1", "thumbnail": "https://picsum.photos/seed/metgala1/400/400", "platform": "instagram", "description": "Zendaya's robot dress is EVERYTHING", "externalUrl": "https://instagram.com", "likes": 2400000, "comments": 45000 },
+      { "id": "p2", "thumbnail": "https://picsum.photos/seed/metgala2/400/400", "platform": "xiaohongshu", "description": "Met Gala 红毯最佳着装 TOP 10", "externalUrl": "https://xiaohongshu.com", "likes": 89000, "comments": 3200 }
+    ]
+  },
+  "2": {
+    "timeline": {
+      "dataPoints": [
+        { "date": "2025-01-09", "heatValue": 15, "engagementCount": 32000, "postCount": 89 },
+        { "date": "2025-01-10", "heatValue": 35, "engagementCount": 78000, "postCount": 245 },
+        { "date": "2025-01-11", "heatValue": 62, "engagementCount": 145000, "postCount": 520 },
+        { "date": "2025-01-12", "heatValue": 85, "engagementCount": 210000, "postCount": 890 },
+        { "date": "2025-01-13", "heatValue": 95, "engagementCount": 280000, "postCount": 1200 },
+        { "date": "2025-01-14", "heatValue": 88, "engagementCount": 245000, "postCount": 980 },
+        { "date": "2025-01-15", "heatValue": 72, "engagementCount": 180000, "postCount": 650 }
+      ],
+      "events": [
+        { "id": "e2-1", "date": "2025-01-10", "type": "first_post", "title": "章小蕙街拍曝光", "description": "首组巴黎时装周场外街拍", "relatedDriverId": "d6" },
+        { "id": "e2-2", "date": "2025-01-12", "type": "celebrity_join", "title": "多位明星抵达巴黎", "description": "刘雯、何穗等超模陆续抵达" },
+        { "id": "e2-3", "date": "2025-01-13", "type": "peak_point", "title": "开秀首日", "description": "Dior、Chanel 大秀引爆关注" }
+      ]
+    },
+    "platformBreakdown": [
+      { "platform": "xiaohongshu", "percentage": 42, "count": 156000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T06:00:00Z" },
+      { "platform": "instagram", "percentage": 30, "count": 112000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "google", "percentage": 15, "count": 55000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "tiktok", "percentage": 13, "count": 48000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T07:00:00Z" }
+    ],
+    "keyInsight": "极简主义与超大廓形成为本季街拍主旋律，中国博主穿搭热度首次超越欧美 KOL，黑白灰配色占比达 65%。",
+    "trendDrivers": [
+      { "id": "d6", "name": "章小蕙", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=zhang", "role": "kol", "platform": "xiaohongshu", "firstPostTime": "2025-01-10T14:00:00Z", "postCount": 12, "engagementTotal": 580000, "isFirstMover": true, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/zhang-preview/200/200" } },
+      { "id": "d7", "name": "Bottega Veneta", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=bv", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-12T16:00:00Z", "postCount": 8, "engagementTotal": 420000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/bv-preview/200/200" } },
+      { "id": "d8", "name": "WWD", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=wwd", "role": "media", "platform": "instagram", "firstPostTime": "2025-01-11T09:00:00Z", "postCount": 25, "engagementTotal": 380000, "isFirstMover": false, "previewContent": { "type": "text", "text": "Paris Fashion Week street style report..." } }
+    ],
+    "curatedPosts": [
+      { "id": "p3", "thumbnail": "https://picsum.photos/seed/pfw1/400/400", "platform": "xiaohongshu", "description": "巴黎街拍｜这些搭配可以直接抄", "externalUrl": "https://xiaohongshu.com", "likes": 45000, "comments": 1200 }
+    ]
+  },
+  "3": {
+    "timeline": {
+      "dataPoints": [
+        { "date": "2025-01-09", "heatValue": 5, "engagementCount": 12000, "postCount": 45 },
+        { "date": "2025-01-10", "heatValue": 8, "engagementCount": 18000, "postCount": 78 },
+        { "date": "2025-01-11", "heatValue": 45, "engagementCount": 95000, "postCount": 320 },
+        { "date": "2025-01-12", "heatValue": 88, "engagementCount": 185000, "postCount": 680 },
+        { "date": "2025-01-13", "heatValue": 75, "engagementCount": 145000, "postCount": 520 },
+        { "date": "2025-01-14", "heatValue": 62, "engagementCount": 110000, "postCount": 380 },
+        { "date": "2025-01-15", "heatValue": 48, "engagementCount": 78000, "postCount": 250 }
+      ],
+      "events": [
+        { "id": "e3-1", "date": "2025-01-11", "type": "first_post", "title": "BOF 独家爆料", "description": "Business of Fashion 首发离职传闻", "relatedDriverId": "d9" },
+        { "id": "e3-2", "date": "2025-01-12", "type": "peak_point", "title": "财报发布日", "description": "季度财报发布后舆论达到顶峰" },
+        { "id": "e3-3", "date": "2025-01-13", "type": "brand_response", "title": "品牌官方声明", "description": "集团发布正式声明澄清" }
+      ]
+    },
+    "platformBreakdown": [
+      { "platform": "google", "percentage": 45, "count": 89000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "instagram", "percentage": 25, "count": 50000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "xiaohongshu", "percentage": 18, "count": 35000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T06:00:00Z" },
+      { "platform": "baidu", "percentage": 12, "count": 24000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T05:00:00Z" }
+    ],
+    "keyInsight": "传闻始于财报发布后，市场关注继任者人选，内部消息指向品牌将进行战略重组，股价已下跌 8%。",
+    "trendDrivers": [
+      { "id": "d9", "name": "BOF", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=bof", "role": "media", "platform": "instagram", "firstPostTime": "2025-01-11T06:00:00Z", "postCount": 6, "engagementTotal": 125000, "isFirstMover": true, "previewContent": { "type": "text", "text": "EXCLUSIVE: Sources confirm CEO departure talks..." } },
+      { "id": "d10", "name": "WWD", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=wwd2", "role": "media", "platform": "instagram", "firstPostTime": "2025-01-11T08:00:00Z", "postCount": 8, "engagementTotal": 98000, "isFirstMover": false, "previewContent": { "type": "text", "text": "Breaking: Luxury conglomerate CEO exit rumors..." } }
+    ],
+    "curatedPosts": [
+      { "id": "p4", "thumbnail": "https://picsum.photos/seed/ceo1/400/400", "platform": "google", "description": "Breaking: CEO departure rumors shake luxury market", "externalUrl": "https://google.com", "likes": 0, "comments": 0 }
+    ]
+  },
+  "4": {
+    "timeline": {
+      "dataPoints": [
+        { "date": "2025-01-09", "heatValue": 8, "engagementCount": 25000, "postCount": 85 },
+        { "date": "2025-01-10", "heatValue": 22, "engagementCount": 68000, "postCount": 210 },
+        { "date": "2025-01-11", "heatValue": 55, "engagementCount": 175000, "postCount": 580 },
+        { "date": "2025-01-12", "heatValue": 92, "engagementCount": 385000, "postCount": 1450 },
+        { "date": "2025-01-13", "heatValue": 85, "engagementCount": 320000, "postCount": 1100 },
+        { "date": "2025-01-14", "heatValue": 68, "engagementCount": 225000, "postCount": 750 },
+        { "date": "2025-01-15", "heatValue": 52, "engagementCount": 165000, "postCount": 480 }
+      ],
+      "events": [
+        { "id": "e4-1", "date": "2025-01-10", "type": "first_post", "title": "Law Roach 预告", "description": "造型师提前发布幕后花絮", "relatedDriverId": "d12" },
+        { "id": "e4-2", "date": "2025-01-12", "type": "peak_point", "title": "封面正式发布", "description": "Elle 官方发布完整封面大片" },
+        { "id": "e4-3", "date": "2025-01-12", "type": "celebrity_join", "title": "Zendaya 转发", "description": "Zendaya 亲自转发并感谢团队", "relatedDriverId": "d11" }
+      ]
+    },
+    "platformBreakdown": [
+      { "platform": "instagram", "percentage": 40, "count": 180000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "tiktok", "percentage": 30, "count": 135000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T07:30:00Z" },
+      { "platform": "xiaohongshu", "percentage": 20, "count": 90000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T06:00:00Z" },
+      { "platform": "google", "percentage": 10, "count": 45000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" }
+    ],
+    "keyInsight": "封面造型由 Law Roach 打造，复古好莱坞风格引发大量仿妆教程，「Zendaya 同款红唇」搜索量增长 320%。",
+    "trendDrivers": [
+      { "id": "d11", "name": "Zendaya", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=zendaya2", "role": "celebrity", "platform": "instagram", "firstPostTime": "2025-01-12T15:00:00Z", "postCount": 2, "engagementTotal": 5800000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/zendaya2-preview/200/200" } },
+      { "id": "d12", "name": "Law Roach", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=lawroach", "role": "kol", "platform": "instagram", "firstPostTime": "2025-01-10T20:00:00Z", "postCount": 5, "engagementTotal": 420000, "isFirstMover": true, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/lawroach-preview/200/200" } },
+      { "id": "d13", "name": "Elle", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=elle", "role": "media", "platform": "instagram", "firstPostTime": "2025-01-12T12:00:00Z", "postCount": 8, "engagementTotal": 1250000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/elle-preview/200/200" } }
+    ],
+    "curatedPosts": [
+      { "id": "p5", "thumbnail": "https://picsum.photos/seed/zendaya1/400/400", "platform": "instagram", "description": "THE COVER. Zendaya for Elle.", "externalUrl": "https://instagram.com", "likes": 3200000, "comments": 67000 }
+    ]
+  },
+  "5": {
+    "timeline": {
+      "dataPoints": [
+        { "date": "2025-01-09", "heatValue": 18, "engagementCount": 28000, "postCount": 95 },
+        { "date": "2025-01-10", "heatValue": 32, "engagementCount": 52000, "postCount": 180 },
+        { "date": "2025-01-11", "heatValue": 48, "engagementCount": 85000, "postCount": 320 },
+        { "date": "2025-01-12", "heatValue": 65, "engagementCount": 125000, "postCount": 480 },
+        { "date": "2025-01-13", "heatValue": 78, "engagementCount": 165000, "postCount": 620 },
+        { "date": "2025-01-14", "heatValue": 72, "engagementCount": 148000, "postCount": 550 },
+        { "date": "2025-01-15", "heatValue": 68, "engagementCount": 132000, "postCount": 490 }
+      ],
+      "events": [
+        { "id": "e5-1", "date": "2025-01-10", "type": "first_post", "title": "时尚芭莎专题", "description": "发布「静奢风」专题报道", "relatedDriverId": "d16" },
+        { "id": "e5-2", "date": "2025-01-12", "type": "brand_response", "title": "The Row 新款发布", "description": "The Row 官宣春季新款大衣", "relatedDriverId": "d14" },
+        { "id": "e5-3", "date": "2025-01-13", "type": "peak_point", "title": "电商搜索峰值", "description": "淘宝「长款大衣」搜索达峰值" }
+      ]
+    },
+    "platformBreakdown": [
+      { "platform": "google", "percentage": 35, "count": 78000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "xiaohongshu", "percentage": 30, "count": 67000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T06:00:00Z" },
+      { "platform": "instagram", "percentage": 20, "count": 45000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "taobao", "percentage": 15, "count": 33000, "dataSource": "estimated", "lastUpdated": "2025-01-15T04:00:00Z" }
+    ],
+    "keyInsight": "The Row、Toteme 等品牌引领趋势，电商平台「长款大衣」搜索环比增长 180%，羊绒材质最受青睐。",
+    "trendDrivers": [
+      { "id": "d14", "name": "The Row", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=therow", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-12T10:00:00Z", "postCount": 4, "engagementTotal": 285000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/therow-preview/200/200" } },
+      { "id": "d15", "name": "Toteme", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=toteme", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-11T14:00:00Z", "postCount": 3, "engagementTotal": 125000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/toteme-preview/200/200" } },
+      { "id": "d16", "name": "时尚芭莎", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=bazaar", "role": "media", "platform": "xiaohongshu", "firstPostTime": "2025-01-10T09:00:00Z", "postCount": 6, "engagementTotal": 198000, "isFirstMover": true, "previewContent": { "type": "text", "text": "2025 必备单品：极简主义长款大衣..." } }
+    ],
+    "curatedPosts": [
+      { "id": "p6", "thumbnail": "https://picsum.photos/seed/coat1/400/400", "platform": "xiaohongshu", "description": "2025 必入的 5 件长款大衣推荐", "externalUrl": "https://xiaohongshu.com", "likes": 32000, "comments": 890 }
+    ]
+  },
+  "6": {
+    "timeline": {
+      "dataPoints": [
+        { "date": "2025-01-09", "heatValue": 25, "engagementCount": 45000, "postCount": 150 },
+        { "date": "2025-01-10", "heatValue": 42, "engagementCount": 78000, "postCount": 280 },
+        { "date": "2025-01-11", "heatValue": 68, "engagementCount": 135000, "postCount": 520 },
+        { "date": "2025-01-12", "heatValue": 85, "engagementCount": 195000, "postCount": 780 },
+        { "date": "2025-01-13", "heatValue": 72, "engagementCount": 158000, "postCount": 620 },
+        { "date": "2025-01-14", "heatValue": 58, "engagementCount": 115000, "postCount": 450 },
+        { "date": "2025-01-15", "heatValue": 45, "engagementCount": 85000, "postCount": 320 }
+      ],
+      "events": [
+        { "id": "e6-1", "date": "2025-01-10", "type": "first_post", "title": "街拍首曝", "description": "纽约街头首组 Y2K 造型曝光" },
+        { "id": "e6-2", "date": "2025-01-12", "type": "peak_point", "title": "Bella 本人发帖", "description": "Bella Hadid Instagram 发布穿搭", "relatedDriverId": "d17" },
+        { "id": "e6-3", "date": "2025-01-12", "type": "brand_response", "title": "Dior 互动", "description": "Dior 官方账号点赞并评论", "relatedDriverId": "d18" }
+      ]
+    },
+    "platformBreakdown": [
+      { "platform": "instagram", "percentage": 45, "count": 92000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "tiktok", "percentage": 35, "count": 72000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T07:30:00Z" },
+      { "platform": "xiaohongshu", "percentage": 15, "count": 31000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T06:00:00Z" },
+      { "platform": "google", "percentage": 5, "count": 10000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" }
+    ],
+    "keyInsight": "Bella 近期偏爱 90 年代复古风，低腰牛仔裤和迷你手袋出镜率最高，带动 vintage Dior 马鞍包搜索上涨。",
+    "trendDrivers": [
+      { "id": "d17", "name": "Bella Hadid", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=bella", "role": "celebrity", "platform": "instagram", "firstPostTime": "2025-01-12T16:30:00Z", "postCount": 3, "engagementTotal": 2850000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/bella-preview/200/200" } },
+      { "id": "d18", "name": "Dior", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=dior", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-12T18:00:00Z", "postCount": 2, "engagementTotal": 520000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/dior-preview/200/200" } }
+    ],
+    "curatedPosts": [
+      { "id": "p7", "thumbnail": "https://picsum.photos/seed/bella1/400/400", "platform": "instagram", "description": "Bella's Y2K moment in NYC", "externalUrl": "https://instagram.com", "likes": 890000, "comments": 12000 }
+    ]
+  },
+  "7": {
+    "timeline": {
+      "dataPoints": [
+        { "date": "2025-01-09", "heatValue": 12, "engagementCount": 18000, "postCount": 65 },
+        { "date": "2025-01-10", "heatValue": 28, "engagementCount": 42000, "postCount": 145 },
+        { "date": "2025-01-11", "heatValue": 52, "engagementCount": 85000, "postCount": 310 },
+        { "date": "2025-01-12", "heatValue": 75, "engagementCount": 128000, "postCount": 480 },
+        { "date": "2025-01-13", "heatValue": 68, "engagementCount": 112000, "postCount": 420 },
+        { "date": "2025-01-14", "heatValue": 55, "engagementCount": 88000, "postCount": 320 },
+        { "date": "2025-01-15", "heatValue": 42, "engagementCount": 65000, "postCount": 235 }
+      ],
+      "events": [
+        { "id": "e7-1", "date": "2025-01-10", "type": "first_post", "title": "H&M 发布承诺", "description": "H&M 官宣 2030 碳中和目标", "relatedDriverId": "d19" },
+        { "id": "e7-2", "date": "2025-01-12", "type": "peak_point", "title": "质疑声浪最高", "description": "消费者对「漂绿」质疑达顶峰" },
+        { "id": "e7-3", "date": "2025-01-11", "type": "brand_response", "title": "ZARA 跟进", "description": "ZARA 随后发布类似承诺", "relatedDriverId": "d20" }
+      ]
+    },
+    "platformBreakdown": [
+      { "platform": "google", "percentage": 50, "count": 65000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "instagram", "percentage": 20, "count": 26000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "xiaohongshu", "percentage": 18, "count": 23000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T06:00:00Z" },
+      { "platform": "baidu", "percentage": 12, "count": 16000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T05:00:00Z" }
+    ],
+    "keyInsight": "H&M、ZARA 相继发布 2030 碳中和承诺，消费者对「漂绿」质疑声增加，再生材料使用率成为关注焦点。",
+    "trendDrivers": [
+      { "id": "d19", "name": "H&M", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=hm", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-10T08:00:00Z", "postCount": 5, "engagementTotal": 185000, "isFirstMover": true, "previewContent": { "type": "text", "text": "Our commitment to a sustainable future..." } },
+      { "id": "d20", "name": "ZARA", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=zara", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-11T10:00:00Z", "postCount": 4, "engagementTotal": 142000, "isFirstMover": false, "previewContent": { "type": "text", "text": "Join the Change. Our 2030 sustainability goals..." } },
+      { "id": "d21", "name": "BOF", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=bof2", "role": "media", "platform": "instagram", "firstPostTime": "2025-01-11T14:00:00Z", "postCount": 8, "engagementTotal": 95000, "isFirstMover": false, "previewContent": { "type": "text", "text": "Analysis: Are fast fashion's green promises enough?" } }
+    ],
+    "curatedPosts": [
+      { "id": "p8", "thumbnail": "https://picsum.photos/seed/sustain1/400/400", "platform": "google", "description": "Fast fashion's sustainability promises under scrutiny", "externalUrl": "https://google.com", "likes": 0, "comments": 0 }
+    ]
+  },
+  "8": {
+    "timeline": {
+      "dataPoints": [
+        { "date": "2025-01-09", "heatValue": 15, "engagementCount": 22000, "postCount": 78 },
+        { "date": "2025-01-10", "heatValue": 28, "engagementCount": 45000, "postCount": 165 },
+        { "date": "2025-01-11", "heatValue": 45, "engagementCount": 78000, "postCount": 295 },
+        { "date": "2025-01-12", "heatValue": 62, "engagementCount": 115000, "postCount": 450 },
+        { "date": "2025-01-13", "heatValue": 75, "engagementCount": 148000, "postCount": 580 },
+        { "date": "2025-01-14", "heatValue": 82, "engagementCount": 175000, "postCount": 690 },
+        { "date": "2025-01-15", "heatValue": 88, "engagementCount": 198000, "postCount": 780 }
+      ],
+      "events": [
+        { "id": "e8-1", "date": "2025-01-10", "type": "first_post", "title": "Vogue Italia 预告", "description": "发布时装周完整日程预告", "relatedDriverId": "d24" },
+        { "id": "e8-2", "date": "2025-01-13", "type": "brand_response", "title": "Prada 官宣嘉宾", "description": "Prada 公布秀场嘉宾名单", "relatedDriverId": "d22" },
+        { "id": "e8-3", "date": "2025-01-15", "type": "peak_point", "title": "开幕在即", "description": "距离开幕倒计时热度持续攀升" }
+      ]
+    },
+    "platformBreakdown": [
+      { "platform": "instagram", "percentage": 40, "count": 56000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "google", "percentage": 35, "count": 49000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "xiaohongshu", "percentage": 15, "count": 21000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T06:00:00Z" },
+      { "platform": "tiktok", "percentage": 10, "count": 14000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T07:00:00Z" }
+    ],
+    "keyInsight": "Prada、Gucci、Armani 领衔日程，中国买手参展人数预计创新高，「米兰时装周门票」搜索量激增。",
+    "trendDrivers": [
+      { "id": "d22", "name": "Prada", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=prada", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-13T09:00:00Z", "postCount": 6, "engagementTotal": 425000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/prada-preview/200/200" } },
+      { "id": "d23", "name": "Gucci", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=gucci", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-12T14:00:00Z", "postCount": 8, "engagementTotal": 385000, "isFirstMover": false, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/gucci-preview/200/200" } },
+      { "id": "d24", "name": "Vogue Italia", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=vogueit", "role": "media", "platform": "instagram", "firstPostTime": "2025-01-10T10:00:00Z", "postCount": 15, "engagementTotal": 280000, "isFirstMover": true, "previewContent": { "type": "text", "text": "Milan Fashion Week FW25: Complete Schedule..." } }
+    ],
+    "curatedPosts": [
+      { "id": "p9", "thumbnail": "https://picsum.photos/seed/milan1/400/400", "platform": "instagram", "description": "Milan Fashion Week FW25 is coming", "externalUrl": "https://instagram.com", "likes": 45000, "comments": 890 }
+    ]
+  },
+  "9": {
+    "timeline": {
+      "dataPoints": [
+        { "date": "2025-01-09", "heatValue": 8, "engagementCount": 12000, "postCount": 45 },
+        { "date": "2025-01-10", "heatValue": 15, "engagementCount": 25000, "postCount": 95 },
+        { "date": "2025-01-11", "heatValue": 35, "engagementCount": 58000, "postCount": 220 },
+        { "date": "2025-01-12", "heatValue": 72, "engagementCount": 125000, "postCount": 480 },
+        { "date": "2025-01-13", "heatValue": 65, "engagementCount": 105000, "postCount": 395 },
+        { "date": "2025-01-14", "heatValue": 52, "engagementCount": 82000, "postCount": 310 },
+        { "date": "2025-01-15", "heatValue": 42, "engagementCount": 65000, "postCount": 245 }
+      ],
+      "events": [
+        { "id": "e9-1", "date": "2025-01-11", "type": "first_post", "title": "融资消息曝光", "description": "科技媒体首发融资信息" },
+        { "id": "e9-2", "date": "2025-01-12", "type": "peak_point", "title": "官方确认", "description": "Vestiaire Collective 官方确认融资", "relatedDriverId": "d25" },
+        { "id": "e9-3", "date": "2025-01-13", "type": "brand_response", "title": "竞争对手回应", "description": "The RealReal 发布市场展望", "relatedDriverId": "d26" }
+      ]
+    },
+    "platformBreakdown": [
+      { "platform": "google", "percentage": 55, "count": 48000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "baidu", "percentage": 25, "count": 22000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T05:00:00Z" },
+      { "platform": "instagram", "percentage": 12, "count": 10000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "xiaohongshu", "percentage": 8, "count": 7000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T06:00:00Z" }
+    ],
+    "keyInsight": "Vestiaire Collective 获 C 轮融资，估值达 17 亿美元，二手奢侈品市场年增速保持 25% 以上。",
+    "trendDrivers": [
+      { "id": "d25", "name": "Vestiaire Collective", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=vestiaire", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-12T11:00:00Z", "postCount": 4, "engagementTotal": 85000, "isFirstMover": false, "previewContent": { "type": "text", "text": "Exciting news! We've closed our Series C..." } },
+      { "id": "d26", "name": "The RealReal", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=realreal", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-13T14:00:00Z", "postCount": 3, "engagementTotal": 52000, "isFirstMover": false, "previewContent": { "type": "text", "text": "The luxury resale market continues to grow..." } }
+    ],
+    "curatedPosts": [
+      { "id": "p10", "thumbnail": "https://picsum.photos/seed/resale1/400/400", "platform": "google", "description": "Luxury resale market hits new milestone", "externalUrl": "https://google.com", "likes": 0, "comments": 0 }
+    ]
+  },
+  "10": {
+    "timeline": {
+      "dataPoints": [
+        { "date": "2025-01-09", "heatValue": 5, "engagementCount": 15000, "postCount": 55 },
+        { "date": "2025-01-10", "heatValue": 18, "engagementCount": 52000, "postCount": 195 },
+        { "date": "2025-01-11", "heatValue": 45, "engagementCount": 145000, "postCount": 550 },
+        { "date": "2025-01-12", "heatValue": 88, "engagementCount": 385000, "postCount": 1450 },
+        { "date": "2025-01-13", "heatValue": 95, "engagementCount": 520000, "postCount": 1980 },
+        { "date": "2025-01-14", "heatValue": 82, "engagementCount": 420000, "postCount": 1580 },
+        { "date": "2025-01-15", "heatValue": 68, "engagementCount": 325000, "postCount": 1200 }
+      ],
+      "events": [
+        { "id": "e10-1", "date": "2025-01-10", "type": "first_post", "title": "预告视频发布", "description": "Kendall 发布品牌预告视频", "relatedDriverId": "d27" },
+        { "id": "e10-2", "date": "2025-01-12", "type": "celebrity_join", "title": "品牌正式上线", "description": "Kendall 个人品牌官网正式开放", "relatedDriverId": "d27" },
+        { "id": "e10-3", "date": "2025-01-13", "type": "peak_point", "title": "首批售罄", "description": "首批产品多款已售罄" },
+        { "id": "e10-4", "date": "2025-01-14", "type": "brand_response", "title": "FWRD 独家合作", "description": "FWRD 宣布成为独家零售合作伙伴", "relatedDriverId": "d28" }
+      ]
+    },
+    "platformBreakdown": [
+      { "platform": "instagram", "percentage": 38, "count": 165000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" },
+      { "platform": "tiktok", "percentage": 32, "count": 139000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T07:30:00Z" },
+      { "platform": "xiaohongshu", "percentage": 18, "count": 78000, "dataSource": "aggregator", "lastUpdated": "2025-01-15T06:00:00Z" },
+      { "platform": "google", "percentage": 12, "count": 52000, "dataSource": "official_api", "lastUpdated": "2025-01-15T08:00:00Z" }
+    ],
+    "keyInsight": "Kendall 个人品牌主打「加州极简」风格，首批产品包括基础款 T 恤和牛仔裤，定价 $80-$200 中端市场。",
+    "trendDrivers": [
+      { "id": "d27", "name": "Kendall Jenner", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=kendall", "role": "celebrity", "platform": "instagram", "firstPostTime": "2025-01-10T18:00:00Z", "postCount": 8, "engagementTotal": 12500000, "isFirstMover": true, "previewContent": { "type": "image", "thumbnail": "https://picsum.photos/seed/kendall-preview/200/200" } },
+      { "id": "d28", "name": "FWRD", "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=fwrd", "role": "brand", "platform": "instagram", "firstPostTime": "2025-01-14T12:00:00Z", "postCount": 5, "engagementTotal": 285000, "isFirstMover": false, "previewContent": { "type": "text", "text": "Exclusively at FWRD: Kendall's new collection..." } }
+    ],
+    "curatedPosts": [
+      { "id": "p11", "thumbnail": "https://picsum.photos/seed/kendall1/400/400", "platform": "instagram", "description": "Introducing my new brand 🤍", "externalUrl": "https://instagram.com", "likes": 4500000, "comments": 89000 }
+    ]
+  }
+}
