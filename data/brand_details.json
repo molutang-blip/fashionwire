@@ -1,0 +1,341 @@
+{
+  "lv-show-2025-pre-fall": {
+    "brandId": "louis-vuitton",
+    "brandName": "Louis Vuitton",
+    "brandNameZh": "路易威登",
+    "group": "LVMH",
+    "newsDetail": {
+      "titleZh": "2025 早秋系列发布 · 巴黎 Left Bank 大秀",
+      "titleEn": "2025 Pre-Fall Collection · Paris Left Bank Show",
+      "content": "Louis Vuitton 于巴黎左岸举办 2025 早秋系列大秀，以建筑线条与金属细节回应城市夜色。本季男装与女装合并走秀，延续品牌一贯的旅行叙事主题，融入更多现代都市元素。创意总监 Nicolas Ghesquière 表示，本系列旨在探索都市游牧者的多元身份。",
+      "imageUrl": "https://picsum.photos/seed/lv-prefall/800/450",
+      "sourceUrl": "https://www.louisvuitton.com/news/pre-fall-2025"
+    },
+    "milestones": [
+      { "id": "lv-m1", "date": "2025-12-02", "type": "marketing", "title": "2025早秋大秀发布", "description": "巴黎左岸举办男女装合并大秀" },
+      { "id": "lv-m2", "date": "2025-09-15", "type": "product", "title": "Capucines 手袋涨价", "description": "经典款全球涨价约 8%" },
+      { "id": "lv-m3", "date": "2025-07-20", "type": "financial", "title": "H1 财报发布", "description": "上半年营收同比增长 9%，中国区增速领先" },
+      { "id": "lv-m4", "date": "2025-03-10", "type": "marketing", "title": "签约新品牌大使", "description": "宣布 Zendaya 成为全球品牌大使" },
+      { "id": "lv-m5", "date": "2024-10-05", "type": "marketing", "title": "2025春夏大秀", "description": "巴黎卢浮宫举办春夏系列发布" },
+      { "id": "lv-m6", "date": "2024-04-18", "type": "financial", "title": "2023年报发布", "description": "全年营收创历史新高，达 €230亿" },
+      { "id": "lv-m7", "date": "2023-11-20", "type": "product", "title": "Speedy 40周年限定", "description": "推出 Speedy 手袋40周年纪念系列" }
+    ],
+    "financials": {
+      "annualRevenue": { "value": 23.0, "unit": "B", "currency": "EUR", "year": 2024, "yoyChange": 8.5 },
+      "quarterlyRevenue": { "value": 6.2, "unit": "B", "currency": "EUR", "quarter": "Q3", "year": 2025, "yoyChange": 9.2 },
+      "regionBreakdown": [
+        { "region": "亚太（含中国）", "percentage": 35, "yoyChange": 12 },
+        { "region": "欧洲", "percentage": 28, "yoyChange": 5 },
+        { "region": "北美", "percentage": 25, "yoyChange": 7 },
+        { "region": "其他", "percentage": 12, "yoyChange": 4 }
+      ],
+      "dataSource": "LVMH 2024 年报 & Q3 2025 财报",
+      "lastUpdated": "2025-11-15"
+    }
+  },
+  "gucci-ceo-2025": {
+    "brandId": "gucci",
+    "brandName": "Gucci",
+    "brandNameZh": "古驰",
+    "group": "Kering",
+    "newsDetail": {
+      "titleZh": "任命全新 CEO，聚焦高端化与零售效率",
+      "titleEn": "New CEO Appointed, Focus on Premiumization",
+      "content": "Kering 集团宣布任命新 CEO 执掌 Gucci，新管理层将重新梳理全球门店网络，强化核心包袋与经典图案资产。此次人事变动是 Gucci 近年来品牌重塑战略的重要一步，旨在应对奢侈品市场的新挑战。新任 CEO 此前在 LVMH 旗下品牌担任要职，拥有丰富的奢侈品零售经验。",
+      "imageUrl": "https://picsum.photos/seed/gucci-ceo/800/450",
+      "sourceUrl": "https://wwd.com/business-news/gucci-new-ceo"
+    },
+    "milestones": [
+      { "id": "gu-m1", "date": "2025-11-18", "type": "personnel", "title": "任命新任 CEO", "description": "原 LVMH 高管出任 Gucci CEO" },
+      { "id": "gu-m2", "date": "2025-09-22", "type": "marketing", "title": "米兰时装周大秀", "description": "Sabato De Sarno 第三个系列发布" },
+      { "id": "gu-m3", "date": "2025-06-10", "type": "financial", "title": "H1 财报预警", "description": "上半年营收同比下滑 18%，启动成本削减计划" },
+      { "id": "gu-m4", "date": "2025-02-25", "type": "marketing", "title": "签约代言人", "description": "宣布 Julia Garner 为新任品牌大使" },
+      { "id": "gu-m5", "date": "2024-09-20", "type": "marketing", "title": "新创意总监首秀", "description": "Sabato De Sarno 首个系列亮相米兰" },
+      { "id": "gu-m6", "date": "2024-01-15", "type": "personnel", "title": "创意总监更替", "description": "Alessandro Michele 离任，Sabato De Sarno 接任" },
+      { "id": "gu-m7", "date": "2023-07-12", "type": "product", "title": "Jackie 1961 热卖", "description": "复刻款 Jackie 手袋成为年度爆款" }
+    ],
+    "financials": {
+      "annualRevenue": { "value": 9.8, "unit": "B", "currency": "EUR", "year": 2024, "yoyChange": -6.2 },
+      "quarterlyRevenue": { "value": 2.1, "unit": "B", "currency": "EUR", "quarter": "Q3", "year": 2025, "yoyChange": -18.5 },
+      "regionBreakdown": [
+        { "region": "亚太（含中国）", "percentage": 38, "yoyChange": -22 },
+        { "region": "欧洲", "percentage": 30, "yoyChange": -8 },
+        { "region": "北美", "percentage": 22, "yoyChange": -15 },
+        { "region": "其他", "percentage": 10, "yoyChange": -5 }
+      ],
+      "dataSource": "Kering 2024 年报 & Q3 2025 财报",
+      "lastUpdated": "2025-11-10"
+    }
+  },
+  "shein-popup-london": {
+    "brandId": "shein",
+    "brandName": "SHEIN",
+    "brandNameZh": "希音",
+    "group": "Independent",
+    "newsDetail": {
+      "titleZh": "宣布在伦敦开设快闪空间，测试线下触点",
+      "titleEn": "London Pop-up Store Announced",
+      "content": "快时尚巨头 SHEIN 宣布在伦敦牛津街开设为期三个月的快闪空间，这是该品牌在欧洲的首个线下尝试。快闪店将采用数据驱动选品策略，将线上爆款复制到线下，强调价格力与即时消费者反馈。此举被视为 SHEIN IPO 前的品牌形象提升行动。",
+      "imageUrl": "https://picsum.photos/seed/shein-popup/800/450",
+      "sourceUrl": "https://shein.com/press/london-popup"
+    },
+    "milestones": [
+      { "id": "sh-m1", "date": "2025-11-05", "type": "marketing", "title": "伦敦快闪店开业", "description": "牛津街首个欧洲线下触点" },
+      { "id": "sh-m2", "date": "2025-08-20", "type": "financial", "title": "IPO 估值下调", "description": "传闻 IPO 估值从 $660亿降至 $500亿" },
+      { "id": "sh-m3", "date": "2025-05-15", "type": "marketing", "title": "东京快闪店", "description": "在东京原宿开设亚洲首家快闪店" },
+      { "id": "sh-m4", "date": "2025-02-10", "type": "product", "title": "推出高端线 MOTF", "description": "发布更高品质的副线品牌" },
+      { "id": "sh-m5", "date": "2024-11-25", "type": "financial", "title": "秘密递交 IPO 申请", "description": "向美国 SEC 秘密递交上市申请" },
+      { "id": "sh-m6", "date": "2024-06-08", "type": "marketing", "title": "争议广告事件", "description": "因供应链问题引发公关危机" }
+    ],
+    "financials": {
+      "annualRevenue": { "value": 32.5, "unit": "B", "currency": "USD", "year": 2024, "yoyChange": 25.0 },
+      "quarterlyRevenue": { "value": 9.8, "unit": "B", "currency": "USD", "quarter": "Q3", "year": 2025, "yoyChange": 18.5 },
+      "regionBreakdown": [
+        { "region": "北美", "percentage": 28, "yoyChange": 15 },
+        { "region": "欧洲", "percentage": 32, "yoyChange": 22 },
+        { "region": "拉美", "percentage": 18, "yoyChange": 35 },
+        { "region": "其他", "percentage": 22, "yoyChange": 20 }
+      ],
+      "dataSource": "媒体估算（非公开数据）",
+      "lastUpdated": "2025-10-20"
+    }
+  },
+  "prada-resort-2026": {
+    "brandId": "prada",
+    "brandName": "Prada",
+    "brandNameZh": "普拉达",
+    "group": "Prada Group",
+    "newsDetail": {
+      "titleZh": "2026 度假系列发布 · 米兰秀场",
+      "titleEn": "Resort 2026 Collection · Milan Show",
+      "content": "Prada 于米兰发布 2026 度假系列，Miuccia Prada 与 Raf Simons 联合呈现以轻盈材质与几何剪裁为特色的度假氛围。本系列强调实穿性与廓形实验的平衡，延续双设计师时代的独特美学语言。大量使用再生尼龙材料，呼应品牌可持续发展承诺。",
+      "imageUrl": "https://picsum.photos/seed/prada-resort/800/450",
+      "sourceUrl": "https://www.businessoffashion.com/prada-resort-2026"
+    },
+    "milestones": [
+      { "id": "pr-m1", "date": "2025-11-28", "type": "marketing", "title": "2026度假系列发布", "description": "米兰秀场展示全新度假系列" },
+      { "id": "pr-m2", "date": "2025-09-18", "type": "marketing", "title": "米兰时装周大秀", "description": "2026春夏系列亮相，延续极简主义" },
+      { "id": "pr-m3", "date": "2025-07-25", "type": "financial", "title": "H1 业绩亮眼", "description": "上半年营收同比增长 17%，跑赢大盘" },
+      { "id": "pr-m4", "date": "2025-04-10", "type": "product", "title": "Re-Nylon 系列扩展", "description": "再生尼龙产品线扩展至鞋履" },
+      { "id": "pr-m5", "date": "2024-10-20", "type": "marketing", "title": "与 adidas 联名第四弹", "description": "Prada x adidas 持续发布联名款" },
+      { "id": "pr-m6", "date": "2024-05-15", "type": "personnel", "title": "确认双创意总监模式延续", "description": "Miuccia 与 Raf 合约续签" },
+      { "id": "pr-m7", "date": "2023-12-08", "type": "financial", "title": "收购 Versace 传闻", "description": "传闻 Prada 集团有意收购 Versace（未证实）" }
+    ],
+    "financials": {
+      "annualRevenue": { "value": 4.7, "unit": "B", "currency": "EUR", "year": 2024, "yoyChange": 16.5 },
+      "quarterlyRevenue": { "value": 1.35, "unit": "B", "currency": "EUR", "quarter": "Q3", "year": 2025, "yoyChange": 18.2 },
+      "regionBreakdown": [
+        { "region": "亚太（含中国）", "percentage": 40, "yoyChange": 22 },
+        { "region": "欧洲", "percentage": 32, "yoyChange": 12 },
+        { "region": "北美", "percentage": 18, "yoyChange": 15 },
+        { "region": "其他", "percentage": 10, "yoyChange": 8 }
+      ],
+      "dataSource": "Prada Group 2024 年报 & Q3 2025 财报",
+      "lastUpdated": "2025-11-05"
+    }
+  },
+  "hermes-expansion-shanghai": {
+    "brandId": "hermes",
+    "brandName": "Hermès",
+    "brandNameZh": "爱马仕",
+    "group": "Hermès",
+    "newsDetail": {
+      "titleZh": "上海新店开业，扩大中国市场布局",
+      "titleEn": "Shanghai Flagship Opening, Expanding China Presence",
+      "content": "Hermès 位于上海静安区的全新旗舰店正式开业，这是品牌在中国大陆最大的门店。新店占地超过 1,500 平方米，展示品牌全系列产品与独家定制服务，包括稀有皮革定制体验。Hermès 表示将继续深耕中国市场，计划未来三年内新增 5-8 家精品店。",
+      "imageUrl": "https://picsum.photos/seed/hermes-shanghai/800/450",
+      "sourceUrl": "https://www.hermes.com/news/shanghai-store"
+    },
+    "milestones": [
+      { "id": "he-m1", "date": "2025-11-20", "type": "marketing", "title": "上海旗舰店开业", "description": "静安区全新旗舰店正式营业" },
+      { "id": "he-m2", "date": "2025-09-08", "type": "product", "title": "Birkin 再次涨价", "description": "经典款全球涨价约 10%，创历史新高" },
+      { "id": "he-m3", "date": "2025-07-15", "type": "financial", "title": "H1 财报发布", "description": "上半年营收增长 15%，持续跑赢奢侈品行业" },
+      { "id": "he-m4", "date": "2025-03-22", "type": "marketing", "title": "2025秋冬大秀", "description": "巴黎举办年度秋冬系列发布会" },
+      { "id": "he-m5", "date": "2024-11-10", "type": "product", "title": "推出美妆线", "description": "正式进军彩妆领域，发布口红系列" },
+      { "id": "he-m6", "date": "2024-06-25", "type": "financial", "title": "市值超越 LVMH 旗下品牌", "description": "股价创新高，市值突破 €2200亿" },
+      { "id": "he-m7", "date": "2023-10-18", "type": "personnel", "title": "家族继承人确认", "description": "Axel Dumas 之子进入管理层培训" }
+    ],
+    "financials": {
+      "annualRevenue": { "value": 13.4, "unit": "B", "currency": "EUR", "year": 2024, "yoyChange": 15.8 },
+      "quarterlyRevenue": { "value": 3.7, "unit": "B", "currency": "EUR", "quarter": "Q3", "year": 2025, "yoyChange": 14.5 },
+      "regionBreakdown": [
+        { "region": "亚太（含中国）", "percentage": 48, "yoyChange": 18 },
+        { "region": "欧洲", "percentage": 25, "yoyChange": 10 },
+        { "region": "北美", "percentage": 18, "yoyChange": 12 },
+        { "region": "其他", "percentage": 9, "yoyChange": 8 }
+      ],
+      "dataSource": "Hermès 2024 年报 & Q3 2025 财报",
+      "lastUpdated": "2025-11-08"
+    }
+  },
+  "chanel-metiers-art-2025": {
+    "brandId": "chanel",
+    "brandName": "Chanel",
+    "brandNameZh": "香奈儿",
+    "group": "Chanel",
+    "newsDetail": {
+      "titleZh": "2025 Métiers d'Art 工坊系列发布",
+      "titleEn": "2025 Métiers d'Art Collection",
+      "content": "Chanel 发布 2025 Métiers d'Art 工坊系列，致敬品牌传统手工艺。创意总监 Virginie Viard 将现代剪裁与经典元素融合，展现羽毛工坊、刺绣工坊和制帽工坊的精湛技艺。本系列延续品牌对工艺传承的重视，每件作品均由专属工坊手工制作。",
+      "imageUrl": "https://picsum.photos/seed/chanel-metiers/800/450",
+      "sourceUrl": "https://www.chanel.com/metiers-art-2025"
+    },
+    "milestones": [
+      { "id": "ch-m1", "date": "2025-12-01", "type": "marketing", "title": "工坊系列发布", "description": "Métiers d'Art 致敬传统手工艺" },
+      { "id": "ch-m2", "date": "2025-10-05", "type": "product", "title": "Classic Flap 涨价", "description": "经典翻盖包再涨 12%，价格突破 $10,000" },
+      { "id": "ch-m3", "date": "2025-07-02", "type": "marketing", "title": "高定大秀", "description": "巴黎大皇宫举办秋冬高定系列" },
+      { "id": "ch-m4", "date": "2025-03-08", "type": "marketing", "title": "2025秋冬成衣发布", "description": "巴黎时装周压轴登场" },
+      { "id": "ch-m5", "date": "2024-09-28", "type": "financial", "title": "2023年报发布", "description": "全年营收 $196亿，增长 16%（私人公司）" },
+      { "id": "ch-m6", "date": "2024-06-15", "type": "personnel", "title": "Virginie Viard 离任传闻", "description": "传闻创意总监将于 2025 年离任（未证实）" },
+      { "id": "ch-m7", "date": "2023-11-30", "type": "product", "title": "限量款争议", "description": "VIP 客户配货政策引发讨论" }
+    ],
+    "financials": {
+      "annualRevenue": { "value": 19.6, "unit": "B", "currency": "USD", "year": 2023, "yoyChange": 16.0 },
+      "quarterlyRevenue": { "value": 5.2, "unit": "B", "currency": "USD", "quarter": "Q3", "year": 2025, "yoyChange": 12.0 },
+      "regionBreakdown": [
+        { "region": "亚太（含中国）", "percentage": 42, "yoyChange": 15 },
+        { "region": "欧洲", "percentage": 30, "yoyChange": 12 },
+        { "region": "北美", "percentage": 20, "yoyChange": 10 },
+        { "region": "其他", "percentage": 8, "yoyChange": 8 }
+      ],
+      "dataSource": "Chanel 2023 年报（估算 2025 数据）",
+      "lastUpdated": "2025-10-15"
+    }
+  },
+  "burberry-q3-earnings": {
+    "brandId": "burberry",
+    "brandName": "Burberry",
+    "brandNameZh": "博柏利",
+    "group": "Burberry Group",
+    "newsDetail": {
+      "titleZh": "Q3 财报发布，亚太市场增长强劲",
+      "titleEn": "Q3 Earnings: Strong APAC Growth",
+      "content": "Burberry 发布 2025 财年第三季度财报，营收同比增长 12%，超出市场预期。增长主要得益于中国与日本市场的强劲复苏，以及数字化渠道的持续贡献。新任创意总监 Daniel Lee 的设计方向获得市场认可，标志性格纹产品重新成为增长引擎。",
+      "imageUrl": "https://picsum.photos/seed/burberry-q3/800/450",
+      "sourceUrl": "https://wwd.com/business-news/burberry-q3-earnings"
+    },
+    "milestones": [
+      { "id": "bu-m1", "date": "2025-11-15", "type": "financial", "title": "Q3 财报发布", "description": "营收同比增长 12%，超预期" },
+      { "id": "bu-m2", "date": "2025-09-16", "type": "marketing", "title": "伦敦时装周大秀", "description": "Daniel Lee 第三季作品发布" },
+      { "id": "bu-m3", "date": "2025-06-20", "type": "product", "title": "Knight Bag 成爆款", "description": "新款骑士包成为季度最畅销单品" },
+      { "id": "bu-m4", "date": "2025-03-05", "type": "marketing", "title": "签约新代言人", "description": "宣布 Barry Keoghan 为品牌大使" },
+      { "id": "bu-m5", "date": "2024-10-12", "type": "marketing", "title": "Daniel Lee 首秀", "description": "新创意总监首个系列亮相伦敦" },
+      { "id": "bu-m6", "date": "2024-03-28", "type": "personnel", "title": "创意总监更替", "description": "Riccardo Tisci 离任，Daniel Lee 接任" },
+      { "id": "bu-m7", "date": "2023-08-15", "type": "financial", "title": "启动成本削减计划", "description": "宣布全球裁员 5%，优化运营成本" }
+    ],
+    "financials": {
+      "annualRevenue": { "value": 2.97, "unit": "B", "currency": "GBP", "year": 2024, "yoyChange": 4.2 },
+      "quarterlyRevenue": { "value": 0.82, "unit": "B", "currency": "GBP", "quarter": "Q3", "year": 2025, "yoyChange": 12.0 },
+      "regionBreakdown": [
+        { "region": "亚太（含中国）", "percentage": 42, "yoyChange": 18 },
+        { "region": "欧洲", "percentage": 28, "yoyChange": 6 },
+        { "region": "北美", "percentage": 22, "yoyChange": 8 },
+        { "region": "其他", "percentage": 8, "yoyChange": 5 }
+      ],
+      "dataSource": "Burberry Group FY2024 年报 & Q3 FY2025 财报",
+      "lastUpdated": "2025-11-15"
+    }
+  },
+  "dior-cruise-2026": {
+    "brandId": "dior",
+    "brandName": "Dior",
+    "brandNameZh": "迪奥",
+    "group": "LVMH",
+    "newsDetail": {
+      "titleZh": "2026 早春度假系列发布 · 摩洛哥马拉喀什",
+      "titleEn": "Cruise 2026 Collection · Marrakech",
+      "content": "Dior 于摩洛哥马拉喀什发布 2026 早春度假系列，女装创意总监 Maria Grazia Chiuri 以异域风情与法式优雅相结合，呈现色彩丰富的度假系列。本季强调轻盈与流动性，大量采用当地传统工艺与刺绣技法，向摩洛哥文化致敬。",
+      "imageUrl": "https://picsum.photos/seed/dior-cruise/800/450",
+      "sourceUrl": "https://www.businessoffashion.com/dior-cruise-2026"
+    },
+    "milestones": [
+      { "id": "di-m1", "date": "2025-11-25", "type": "marketing", "title": "度假系列大秀", "description": "马拉喀什举办 2026 早春系列" },
+      { "id": "di-m2", "date": "2025-09-26", "type": "marketing", "title": "巴黎时装周大秀", "description": "2026春夏系列于卢浮宫发布" },
+      { "id": "di-m3", "date": "2025-07-05", "type": "marketing", "title": "高定大秀", "description": "巴黎罗丹美术馆举办秋冬高定" },
+      { "id": "di-m4", "date": "2025-04-18", "type": "product", "title": "Lady Dior 涨价", "description": "经典款全球涨价约 8%" },
+      { "id": "di-m5", "date": "2025-01-22", "type": "marketing", "title": "签约 Anya Taylor-Joy", "description": "宣布新任全球品牌大使" },
+      { "id": "di-m6", "date": "2024-10-02", "type": "financial", "title": "时装皮具部门增长强劲", "description": "LVMH 财报显示 Dior 增速领先集团" },
+      { "id": "di-m7", "date": "2024-05-20", "type": "personnel", "title": "男装总监 Kim Jones 续约", "description": "确认 Kim Jones 继续执掌男装线" }
+    ],
+    "financials": {
+      "annualRevenue": { "value": 9.5, "unit": "B", "currency": "EUR", "year": 2024, "yoyChange": 12.5 },
+      "quarterlyRevenue": { "value": 2.65, "unit": "B", "currency": "EUR", "quarter": "Q3", "year": 2025, "yoyChange": 11.8 },
+      "regionBreakdown": [
+        { "region": "亚太（含中国）", "percentage": 38, "yoyChange": 15 },
+        { "region": "欧洲", "percentage": 32, "yoyChange": 9 },
+        { "region": "北美", "percentage": 20, "yoyChange": 10 },
+        { "region": "其他", "percentage": 10, "yoyChange": 7 }
+      ],
+      "dataSource": "LVMH 2024 年报（Dior 部门估算）",
+      "lastUpdated": "2025-11-10"
+    }
+  },
+  "zara-sustainability-report": {
+    "brandId": "zara",
+    "brandName": "ZARA",
+    "brandNameZh": "飒拉",
+    "group": "Inditex",
+    "newsDetail": {
+      "titleZh": "发布 2025 可持续性报告，承诺 2030 年碳中和",
+      "titleEn": "2025 Sustainability Report: Carbon Neutral by 2030",
+      "content": "ZARA 母公司 Inditex 发布 2025 年度可持续发展报告，承诺到 2030 年实现碳中和目标。报告宣布将大幅提高再生材料使用比例，并优化全球供应链以减少环境影响。然而，环保组织对品牌的「漂绿」嫌疑提出质疑，认为快时尚模式与可持续目标存在根本矛盾。",
+      "imageUrl": "https://picsum.photos/seed/zara-sustain/800/450",
+      "sourceUrl": "https://www.zara.com/sustainability-2025"
+    },
+    "milestones": [
+      { "id": "za-m1", "date": "2025-11-10", "type": "marketing", "title": "发布可持续报告", "description": "承诺 2030 年碳中和" },
+      { "id": "za-m2", "date": "2025-08-15", "type": "product", "title": "推出再生材料系列", "description": "Join Life 系列扩展至全品类" },
+      { "id": "za-m3", "date": "2025-06-05", "type": "financial", "title": "H1 财报发布", "description": "上半年营收增长 8%，电商占比突破 30%" },
+      { "id": "za-m4", "date": "2025-02-28", "type": "marketing", "title": "与设计师联名", "description": "宣布与 Narciso Rodriguez 联名系列" },
+      { "id": "za-m5", "date": "2024-09-12", "type": "product", "title": "上线二手转售平台", "description": "在欧洲试点旧衣回收与转售服务" },
+      { "id": "za-m6", "date": "2024-04-20", "type": "financial", "title": "2023年报发布", "description": "全年营收 €359亿，增长 10%" },
+      { "id": "za-m7", "date": "2023-10-08", "type": "personnel", "title": "任命新任 CEO", "description": "Oscar Garcia Maceiras 正式出任 CEO" }
+    ],
+    "financials": {
+      "annualRevenue": { "value": 35.9, "unit": "B", "currency": "EUR", "year": 2024, "yoyChange": 10.2 },
+      "quarterlyRevenue": { "value": 9.5, "unit": "B", "currency": "EUR", "quarter": "Q3", "year": 2025, "yoyChange": 8.5 },
+      "regionBreakdown": [
+        { "region": "欧洲", "percentage": 45, "yoyChange": 7 },
+        { "region": "北美", "percentage": 20, "yoyChange": 12 },
+        { "region": "亚太", "percentage": 18, "yoyChange": 10 },
+        { "region": "其他", "percentage": 17, "yoyChange": 9 }
+      ],
+      "dataSource": "Inditex 2024 年报 & Q3 2025 财报",
+      "lastUpdated": "2025-11-02"
+    }
+  },
+  "jacquemus-collab-new": {
+    "brandId": "jacquemus",
+    "brandName": "Jacquemus",
+    "brandNameZh": "雅克慕斯",
+    "group": "Independent",
+    "newsDetail": {
+      "titleZh": "宣布与某运动品牌联名合作",
+      "titleEn": "New Athletic Brand Collaboration Announced",
+      "content": "法国设计师品牌 Jacquemus 宣布与某国际运动品牌达成联名合作，将品牌标志性的南法风格与运动功能性结合。联名系列预计于 2026 年春季发布，涵盖服装、鞋履与配饰。这是 Jacquemus 继 Nike 联名后的又一重磅合作，创始人 Simon Porte Jacquemus 在 Instagram 上发布预告。",
+      "imageUrl": "https://picsum.photos/seed/jacquemus-collab/800/450",
+      "sourceUrl": "https://instagram.com/jacquemus"
+    },
+    "milestones": [
+      { "id": "ja-m1", "date": "2025-11-30", "type": "marketing", "title": "宣布运动品牌联名", "description": "2026 春季发布新联名系列" },
+      { "id": "ja-m2", "date": "2025-09-28", "type": "marketing", "title": "巴黎时装周大秀", "description": "于凡尔赛宫举办浪漫大秀" },
+      { "id": "ja-m3", "date": "2025-06-12", "type": "product", "title": "Le Bambino 成年度爆款", "description": "迷你手袋持续热销，推出新配色" },
+      { "id": "ja-m4", "date": "2025-03-18", "type": "marketing", "title": "夏威夷度假系列", "description": "在夏威夷举办 2025 度假系列发布" },
+      { "id": "ja-m5", "date": "2024-12-05", "type": "financial", "title": "传闻估值超 $10亿", "description": "媒体估算品牌估值达独角兽级别" },
+      { "id": "ja-m6", "date": "2024-07-20", "type": "marketing", "title": "Nike 联名发售", "description": "Jacquemus x Nike 联名系列全球发售" },
+      { "id": "ja-m7", "date": "2024-02-15", "type": "personnel", "title": "任命首位 CEO", "description": "创始人 Simon 引入职业经理人担任 CEO" }
+    ],
+    "financials": {
+      "annualRevenue": { "value": 0.35, "unit": "B", "currency": "EUR", "year": 2024, "yoyChange": 45.0 },
+      "quarterlyRevenue": { "value": 0.12, "unit": "B", "currency": "EUR", "quarter": "Q3", "year": 2025, "yoyChange": 38.0 },
+      "regionBreakdown": [
+        { "region": "欧洲", "percentage": 40, "yoyChange": 35 },
+        { "region": "北美", "percentage": 30, "yoyChange": 55 },
+        { "region": "亚太", "percentage": 20, "yoyChange": 60 },
+        { "region": "其他", "percentage": 10, "yoyChange": 25 }
+      ],
+      "dataSource": "媒体估算（非公开数据）",
+      "lastUpdated": "2025-10-25"
+    }
+  }
+}
