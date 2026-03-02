@@ -1,7 +1,6 @@
 import type {
   TrendingTopic,
   BrandUpdate,
-  HotItem,
   StyleKeyword,
   TrendSource
 } from "@/domain/types";
@@ -9,11 +8,9 @@ import { TodayAngle } from "@/components/TodayAngle";
 import { DailyBriefing } from "@/components/DailyBriefing";
 import { TrendingSection } from "@/components/TrendingSection";
 import { BrandUpdatesSection } from "@/components/BrandUpdatesSection";
-import { HotItemsSection } from "@/components/HotItemsSection";
 import { StyleWordCloud } from "@/components/StyleWordCloud";
 import trendingRaw from "../data/trending_topics.json";
 import brandUpdatesRaw from "../data/brand_updates.json";
-import hotItemsRaw from "../data/hot_items.json";
 import styleKeywordsRaw from "../data/style_keywords.json";
 
 function formatTimeWindow(window: string): string {
@@ -55,18 +52,6 @@ const MOCK_BRAND_UPDATES: BrandUpdate[] = (brandUpdatesRaw as any[]).map((item) 
   summary: item.summary
 }));
 
-const MOCK_HOT_ITEMS: HotItem[] = (hotItemsRaw as any[]).map((item) => ({
-  id: item.id,
-  brand: item.brand,
-  name: item.name,
-  category: item.category,
-  price: item.price,
-  currency: item.currency,
-  imageUrl: item.image_url,
-  buyLink: item.buy_link,
-  score: item.score
-}));
-
 const MOCK_KEYWORDS: StyleKeyword[] = (styleKeywordsRaw as any[]).map((item) => {
   const sources = String(item.sources)
     .split(",")
@@ -86,6 +71,7 @@ const MOCK_KEYWORDS: StyleKeyword[] = (styleKeywordsRaw as any[]).map((item) => 
   };
 });
 
+// 今日汇总数据
 const DAILY_BRIEFING_DATA = {
   hotTopic: "Met Gala 红毯造型",
   hotTopicSource: "Social / Search",
@@ -106,12 +92,9 @@ export default function HomePage() {
 
       {/* Global Fashion Trending + Brand Intelligence */}
       <section id="trending" className="grid gap-6 lg:grid-cols-[1.3fr,1.1fr] items-start">
-       <TrendingSection topics={MOCK_TRENDING} />
+        <TrendingSection topics={MOCK_TRENDING} />
         <BrandUpdatesSection updates={MOCK_BRAND_UPDATES} maxVisible={5} />
       </section>
-
-      {/* Hot Items */}
-      <HotItemsSection items={MOCK_HOT_ITEMS} displayCount={6} />
 
       {/* Style Keywords Cloud */}
       <StyleWordCloud keywords={MOCK_KEYWORDS} />
