@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import type { TrendingTopicDetailEnhanced, TrendSource, PlatformBreakdownEnhanced } from '@/domain/types';
 import { TrendTimeline } from './TrendTimeline';
 import { TrendDriverList } from './TrendDriverCard';
+import { RelatedItemsSection } from './RelatedItemsSection';
 
 interface TrendDetailModalEnhancedProps {
   topic: TrendingTopicDetailEnhanced | null;
@@ -191,6 +192,18 @@ export function TrendDetailModalEnhanced({ topic, isOpen, onClose }: TrendDetail
                 </span>
               </h3>
               <TrendDriverList drivers={topic.trendDrivers} initialCount={4} />
+            </section>
+          )}
+
+          {/* 🛍️ 相关单品 - 仅当有数据时显示 */}
+          {topic.relatedItems && topic.relatedItems.length > 0 && (
+            <section>
+              <h3 className="flex items-center gap-2 text-sm font-medium text-neutral-900 mb-3">
+                <span>🛍️</span>
+                <span>相关单品</span>
+                <span className="text-xs font-normal text-neutral-400">Related Items</span>
+              </h3>
+              <RelatedItemsSection items={topic.relatedItems} />
             </section>
           )}
 
