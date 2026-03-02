@@ -260,3 +260,25 @@ export interface BrandUpdateDetail {
   milestones: BrandMilestone[];
   financials: BrandFinancials;
 }
+// 增强版话题详情（第101-108行，添加了 relatedItems 可选字段）
+export interface TrendingTopicDetailEnhanced extends TrendingTopic {
+  timeline: TimelineData;
+  platformBreakdown: PlatformBreakdownEnhanced[];
+  trendDrivers: TrendDriverEnhanced[];
+  keyInsight: string;
+  curatedPosts: CuratedPost[];
+  relatedItems?: RelatedItem[];  // 新增
+}
+
+// 文件末尾新增（第265-275行）
+// ====== 相关单品类型定义（热榜详情内条件展示）======
+
+export interface RelatedItem {
+  id: string;
+  brand: string;
+  name: string;
+  imageUrl: string;
+  price?: number;
+  currency?: string;
+  externalUrl: string;
+}
