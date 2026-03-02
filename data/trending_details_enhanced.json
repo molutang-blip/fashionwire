@@ -35,6 +35,12 @@
     "curatedPosts": [
       { "id": "p1", "thumbnail": "https://picsum.photos/seed/metgala1/400/400", "platform": "instagram", "description": "Zendaya's robot dress is EVERYTHING", "externalUrl": "https://instagram.com", "likes": 2400000, "comments": 45000 },
       { "id": "p2", "thumbnail": "https://picsum.photos/seed/metgala2/400/400", "platform": "xiaohongshu", "description": "Met Gala 红毯最佳着装 TOP 10", "externalUrl": "https://xiaohongshu.com", "likes": 89000, "comments": 3200 }
+    ],
+    "relatedItems": [
+      { "id": "ri1-1", "brand": "Maison Margiela", "name": "Artisanal Robot Dress (定制款)", "imageUrl": "https://picsum.photos/seed/item-margiela/300/300", "externalUrl": "https://www.maisonmargiela.com" },
+      { "id": "ri1-2", "brand": "Bulgari", "name": "Serpenti Viper 项链", "imageUrl": "https://picsum.photos/seed/item-bulgari/300/300", "price": 45000, "currency": "USD", "externalUrl": "https://www.bulgari.com" },
+      { "id": "ri1-3", "brand": "Christian Louboutin", "name": "So Kate 银色金属高跟鞋", "imageUrl": "https://picsum.photos/seed/item-louboutin/300/300", "price": 1295, "currency": "USD", "externalUrl": "https://www.christianlouboutin.com" },
+      { "id": "ri1-4", "brand": "Jimmy Choo", "name": "Bing 水晶平底鞋", "imageUrl": "https://picsum.photos/seed/item-jimmychoo/300/300", "price": 1095, "currency": "USD", "externalUrl": "https://www.jimmychoo.com" }
     ]
   },
   "2": {
@@ -133,6 +139,11 @@
     ],
     "curatedPosts": [
       { "id": "p5", "thumbnail": "https://picsum.photos/seed/zendaya1/400/400", "platform": "instagram", "description": "THE COVER. Zendaya for Elle.", "externalUrl": "https://instagram.com", "likes": 3200000, "comments": 67000 }
+    ],
+    "relatedItems": [
+      { "id": "ri4-1", "brand": "Valentino", "name": "Red Couture Silk Gown", "imageUrl": "https://picsum.photos/seed/item-valentino/300/300", "externalUrl": "https://www.valentino.com" },
+      { "id": "ri4-2", "brand": "Cartier", "name": "Panthère de Cartier 戒指", "imageUrl": "https://picsum.photos/seed/item-cartier/300/300", "price": 12500, "currency": "USD", "externalUrl": "https://www.cartier.com" },
+      { "id": "ri4-3", "brand": "Pat McGrath", "name": "MatteTrance Lipstick Elson", "imageUrl": "https://picsum.photos/seed/item-patmcgrath/300/300", "price": 38, "currency": "USD", "externalUrl": "https://www.patmcgrath.com" }
     ]
   },
   "5": {
@@ -198,6 +209,12 @@
     ],
     "curatedPosts": [
       { "id": "p7", "thumbnail": "https://picsum.photos/seed/bella1/400/400", "platform": "instagram", "description": "Bella's Y2K moment in NYC", "externalUrl": "https://instagram.com", "likes": 890000, "comments": 12000 }
+    ],
+    "relatedItems": [
+      { "id": "ri6-1", "brand": "Dior", "name": "Vintage Saddle Bag 马鞍包", "imageUrl": "https://picsum.photos/seed/item-dior-saddle/300/300", "price": 3800, "currency": "USD", "externalUrl": "https://www.dior.com" },
+      { "id": "ri6-2", "brand": "Levi's", "name": "501 Low Rise 低腰牛仔裤", "imageUrl": "https://picsum.photos/seed/item-levis/300/300", "price": 98, "currency": "USD", "externalUrl": "https://www.levi.com" },
+      { "id": "ri6-3", "brand": "The Row", "name": "90s Oval 太阳镜", "imageUrl": "https://picsum.photos/seed/item-therow-glasses/300/300", "price": 450, "currency": "USD", "externalUrl": "https://www.therow.com" },
+      { "id": "ri6-4", "brand": "Prada", "name": "Re-Nylon Mini Hobo", "imageUrl": "https://picsum.photos/seed/item-prada-mini/300/300", "price": 1290, "currency": "USD", "externalUrl": "https://www.prada.com" }
     ]
   },
   "7": {
@@ -329,6 +346,11 @@
     ],
     "curatedPosts": [
       { "id": "p11", "thumbnail": "https://picsum.photos/seed/kendall1/400/400", "platform": "instagram", "description": "Introducing my new brand 🤍", "externalUrl": "https://instagram.com", "likes": 4500000, "comments": 89000 }
+    ],
+    "relatedItems": [
+      { "id": "ri10-1", "brand": "Kendall Jenner", "name": "Classic White Tee 经典白T", "imageUrl": "https://picsum.photos/seed/item-kj-tee/300/300", "price": 80, "currency": "USD", "externalUrl": "https://www.fwrd.com/kendall" },
+      { "id": "ri10-2", "brand": "Kendall Jenner", "name": "High-Rise Straight Jeans", "imageUrl": "https://picsum.photos/seed/item-kj-jeans/300/300", "price": 198, "currency": "USD", "externalUrl": "https://www.fwrd.com/kendall" },
+      { "id": "ri10-3", "brand": "Kendall Jenner", "name": "Oversized Cotton Blazer", "imageUrl": "https://picsum.photos/seed/item-kj-blazer/300/300", "price": 295, "currency": "USD", "externalUrl": "https://www.fwrd.com/kendall" }
     ]
   }
 }
