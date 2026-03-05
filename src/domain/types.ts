@@ -104,6 +104,7 @@ export interface TrendingTopicDetailEnhanced extends TrendingTopic {
   trendDrivers: TrendDriverEnhanced[];
   keyInsight: string;
   curatedPosts: CuratedPost[];
+  relatedItems?: RelatedItem[];
 }
 
 export interface CuratedPost {
@@ -260,17 +261,7 @@ export interface BrandUpdateDetail {
   milestones: BrandMilestone[];
   financials: BrandFinancials;
 }
-// 增强版话题详情（第101-108行，添加了 relatedItems 可选字段）
-export interface TrendingTopicDetailEnhanced extends TrendingTopic {
-  timeline: TimelineData;
-  platformBreakdown: PlatformBreakdownEnhanced[];
-  trendDrivers: TrendDriverEnhanced[];
-  keyInsight: string;
-  curatedPosts: CuratedPost[];
-  relatedItems?: RelatedItem[];  // 新增
-}
 
-// 文件末尾新增（第265-275行）
 // ====== 相关单品类型定义（热榜详情内条件展示）======
 
 export interface RelatedItem {
@@ -281,4 +272,70 @@ export interface RelatedItem {
   price?: number;
   currency?: string;
   externalUrl: string;
+}
+
+// ====== 风格关键词增强类型 ======
+
+// 配色方案
+export interface ColorPalette {
+  primary: string;      // 主色 hex，如 "#1A1A1A"
+  secondary: string;    // 辅色 hex
+  accent?: string;      // 点缀色 hex（可选）
+  name: string;         // 配色名称，如 "黑白灰经典配色"
+}
+
+// 核心单品
+export interface FormulaItem {
+  category: string;     // 品类，如 "外套"、"下装"
+  description: string;  // 描述，如 "驼色羊绒大衣"
+  importance: 'must' | 'recommended' | 'optional';  // 重要程度
+}
+
+// 穿搭公式
+export interface StyleFormula {
+  coreItems: FormulaItem[];          // 核心单品清单（5-7件）
+  colorPalette: ColorPalette;        // 配色方案
+  materials: string[];               // 材质关键词，如 ["羊绒", "真丝", "小羊皮"]
+  avoidItems?: string[];             // 避免单品（可选），如 ["荧光色", "过多logo"]
+}
+
+// 风格示例图
+export interface StyleExample {
+  id: string;
+  imageUrl: string;
+  caption?: string;                  // 图片说明，如 "Kendall Jenner 街拍"
+  source?: string;                   // 来源，如 "Instagram"
+}
+
+// 风格关键词详情（增强版）
+export interface StyleKeywordDetail {
+  id: string;
+  keywordZh: string;
+  keywordEn: string;
+  definition: string;                // 一句话定义
+  origin?: string;                   // 起源/背景（可选）
+  representativeFigures?: string[];  // 代表人物（可选），如 ["Sofia Richie", "Gwyneth Paltrow"]
+  formula: StyleFormula;             // 穿搭公式
+  examples: StyleExample[];          // 风格示例图（3-4张）
+  frequency: number;                 // 热度频次（继承原有）
+  sources: { source: TrendSource; count: number }[];  // 来源分布（继承原有）
+}
+
+// AI 试穿请求参数
+export interface AIFittingRequest {
+  styleKeywordId: string;
+  userPhoto: string;                 // base64 或 URL
+  measurements?: {                   // 三围数据（可选）
+    bust?: number;                   // 胸围 cm
+    waist?: number;                  // 腰围 cm
+    hips?: number;                   // 臀围 cm
+    height?: number;                 // 身高 cm
+  };
+}
+
+// AI 试穿结果
+export interface AIFittingResult {
+  generatedImageUrl: string;         // 生成的图片 URL
+  styleKeywordId: string;
+  createdAt: string;
 }
