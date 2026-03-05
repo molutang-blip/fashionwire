@@ -1,0 +1,188 @@
+{
+  "quiet-luxury": {
+    "id": "quiet-luxury",
+    "keywordZh": "静奢风",
+    "keywordEn": "Quiet Luxury",
+    "definition": "低调奢华，强调质感而非 logo，以剪裁和面料取胜",
+    "origin": "2023年起源于对炫富文化的反叛，因《继承之战》等剧集走红，代表一种内敛的富裕美学",
+    "representativeFigures": ["Sofia Richie", "Gwyneth Paltrow", "Rosie Huntington-Whiteley"],
+    "formula": {
+      "coreItems": [
+        { "category": "外套", "description": "驼色/灰色羊绒大衣", "importance": "must" },
+        { "category": "上装", "description": "基础款羊绒针织衫", "importance": "must" },
+        { "category": "下装", "description": "高腰阔腿裤或铅笔裙", "importance": "must" },
+        { "category": "鞋履", "description": "裸色尖头高跟鞋或乐福鞋", "importance": "recommended" },
+        { "category": "包袋", "description": "无 logo 皮质手提包", "importance": "recommended" },
+        { "category": "配饰", "description": "极简金属首饰", "importance": "optional" }
+      ],
+      "colorPalette": {
+        "primary": "#F5F5DC",
+        "secondary": "#808080",
+        "accent": "#FFFFFF",
+        "name": "米灰白中性配色"
+      },
+      "materials": ["羊绒", "真丝", "小羊皮", "高支棉", "羊毛混纺"],
+      "avoidItems": ["大面积 logo", "荧光色", "过多金属装饰", "人造皮革", "亮片"]
+    },
+    "examples": [
+      { "id": "ql-ex1", "imageUrl": "https://picsum.photos/seed/quiet-luxury-1/400/500", "caption": "Sofia Richie 婚礼造型", "source": "Instagram" },
+      { "id": "ql-ex2", "imageUrl": "https://picsum.photos/seed/quiet-luxury-2/400/500", "caption": "The Row 2024 秀场", "source": "Vogue" },
+      { "id": "ql-ex3", "imageUrl": "https://picsum.photos/seed/quiet-luxury-3/400/500", "caption": "街拍：米色系叠穿", "source": "Pinterest" }
+    ],
+    "frequency": 2847,
+    "sources": [
+      { "source": "xiaohongshu", "count": 1200 },
+      { "source": "instagram", "count": 980 },
+      { "source": "google", "count": 667 }
+    ]
+  },
+  "old-money": {
+    "id": "old-money",
+    "keywordZh": "老钱风",
+    "keywordEn": "Old Money",
+    "definition": "模仿欧美世袭贵族的穿衣风格，强调低调、经典、传承感",
+    "origin": "源于对美国东海岸 WASP 文化和欧洲贵族审美的致敬，TikTok 上因 #OldMoney 标签爆火",
+    "representativeFigures": ["Carolyn Bessette-Kennedy", "Diana Spencer", "Aerin Lauder"],
+    "formula": {
+      "coreItems": [
+        { "category": "外套", "description": "藏青色双排扣西装", "importance": "must" },
+        { "category": "上装", "description": "白色/奶油色衬衫", "importance": "must" },
+        { "category": "下装", "description": "卡其色或米色休闲裤", "importance": "must" },
+        { "category": "鞋履", "description": "棕色皮质乐福鞋或帆船鞋", "importance": "recommended" },
+        { "category": "包袋", "description": "经典款皮革手袋", "importance": "recommended" },
+        { "category": "配饰", "description": "珍珠耳环或丝巾", "importance": "optional" },
+        { "category": "配饰", "description": "金属腕表", "importance": "optional" }
+      ],
+      "colorPalette": {
+        "primary": "#1C3A5F",
+        "secondary": "#F5F5DC",
+        "accent": "#8B4513",
+        "name": "藏青米棕经典配色"
+      },
+      "materials": ["羊毛", "棉质府绸", "真丝", "皮革", "羊绒"],
+      "avoidItems": ["运动风单品", "破洞设计", "过于紧身的剪裁", "夸张图案", "荧光色"]
+    },
+    "examples": [
+      { "id": "om-ex1", "imageUrl": "https://picsum.photos/seed/old-money-1/400/500", "caption": "Carolyn Bessette 经典造型", "source": "Pinterest" },
+      { "id": "om-ex2", "imageUrl": "https://picsum.photos/seed/old-money-2/400/500", "caption": "Ralph Lauren 广告大片", "source": "Ralph Lauren" },
+      { "id": "om-ex3", "imageUrl": "https://picsum.photos/seed/old-money-3/400/500", "caption": "Hampton 风格街拍", "source": "Instagram" }
+    ],
+    "frequency": 2156,
+    "sources": [
+      { "source": "tiktok", "count": 890 },
+      { "source": "xiaohongshu", "count": 756 },
+      { "source": "instagram", "count": 510 }
+    ]
+  },
+  "dopamine-dressing": {
+    "id": "dopamine-dressing",
+    "keywordZh": "多巴胺穿搭",
+    "keywordEn": "Dopamine Dressing",
+    "definition": "用明亮、饱和的色彩穿搭来提升心情，让穿衣成为快乐的来源",
+    "origin": "后疫情时代兴起的穿搭理念，由时尚心理学家 Dawnn Karen 推广，强调色彩对情绪的积极影响",
+    "representativeFigures": ["Zendaya", "Blake Lively", "Dua Lipa"],
+    "formula": {
+      "coreItems": [
+        { "category": "外套", "description": "亮色西装或彩色风衣", "importance": "must" },
+        { "category": "上装", "description": "饱和色针织衫或衬衫", "importance": "must" },
+        { "category": "下装", "description": "彩色阔腿裤或印花半裙", "importance": "must" },
+        { "category": "鞋履", "description": "彩色高跟鞋或运动鞋", "importance": "recommended" },
+        { "category": "包袋", "description": "亮色或撞色手袋", "importance": "recommended" },
+        { "category": "配饰", "description": "彩色塑料首饰或夸张耳环", "importance": "optional" }
+      ],
+      "colorPalette": {
+        "primary": "#FF6B6B",
+        "secondary": "#4ECDC4",
+        "accent": "#FFE66D",
+        "name": "珊瑚青柠黄活力配色"
+      },
+      "materials": ["棉质", "丝绸", "合成纤维", "针织面料", "PU 皮革"],
+      "avoidItems": ["全身黑色", "暗沉色调", "过于严肃的剪裁", "单调配色"]
+    },
+    "examples": [
+      { "id": "dd-ex1", "imageUrl": "https://picsum.photos/seed/dopamine-1/400/500", "caption": "Zendaya 彩虹造型", "source": "Getty Images" },
+      { "id": "dd-ex2", "imageUrl": "https://picsum.photos/seed/dopamine-2/400/500", "caption": "Valentino PP Pink 秀场", "source": "Vogue" },
+      { "id": "dd-ex3", "imageUrl": "https://picsum.photos/seed/dopamine-3/400/500", "caption": "色块拼接街拍", "source": "Instagram" }
+    ],
+    "frequency": 1823,
+    "sources": [
+      { "source": "xiaohongshu", "count": 780 },
+      { "source": "tiktok", "count": 623 },
+      { "source": "instagram", "count": 420 }
+    ]
+  },
+  "maillard": {
+    "id": "maillard",
+    "keywordZh": "美拉德色系",
+    "keywordEn": "Maillard Color",
+    "definition": "灵感源于美拉德反应的棕色系穿搭，温暖、高级、秋冬感十足",
+    "origin": "2023年秋季在中国社交媒体爆火，以食物烘焙时产生的焦糖色、咖啡色为灵感",
+    "representativeFigures": ["Hailey Bieber", "Kendall Jenner", "章小蕙"],
+    "formula": {
+      "coreItems": [
+        { "category": "外套", "description": "焦糖色/棕色皮衣或大衣", "importance": "must" },
+        { "category": "上装", "description": "奶咖色针织衫或衬衫", "importance": "must" },
+        { "category": "下装", "description": "深棕色或卡其色裤装", "importance": "must" },
+        { "category": "鞋履", "description": "棕色皮靴或乐福鞋", "importance": "recommended" },
+        { "category": "包袋", "description": "深棕色皮革手袋", "importance": "recommended" },
+        { "category": "配饰", "description": "金色首饰", "importance": "optional" }
+      ],
+      "colorPalette": {
+        "primary": "#8B4513",
+        "secondary": "#D2691E",
+        "accent": "#F5DEB3",
+        "name": "焦糖棕奶茶渐变配色"
+      },
+      "materials": ["皮革", "麂皮", "羊毛", "灯芯绒", "针织面料"],
+      "avoidItems": ["冷色调", "荧光色", "过于明亮的色彩", "银色金属"]
+    },
+    "examples": [
+      { "id": "ml-ex1", "imageUrl": "https://picsum.photos/seed/maillard-1/400/500", "caption": "Hailey Bieber 棕色系造型", "source": "Instagram" },
+      { "id": "ml-ex2", "imageUrl": "https://picsum.photos/seed/maillard-2/400/500", "caption": "章小蕙秋季穿搭", "source": "小红书" },
+      { "id": "ml-ex3", "imageUrl": "https://picsum.photos/seed/maillard-3/400/500", "caption": "Max Mara 秋冬秀场", "source": "Vogue" }
+    ],
+    "frequency": 1567,
+    "sources": [
+      { "source": "xiaohongshu", "count": 920 },
+      { "source": "instagram", "count": 387 },
+      { "source": "tiktok", "count": 260 }
+    ]
+  },
+  "cool-girl": {
+    "id": "cool-girl",
+    "keywordZh": "清冷感",
+    "keywordEn": "Effortless Chic",
+    "definition": "看似毫不费力的高级感，强调慵懒、随性、不刻意的时髦",
+    "origin": "源于法式穿衣哲学，强调 Less is More，代表一种不费力的优雅",
+    "representativeFigures": ["Kaia Gerber", "Emily Ratajkowski", "Jeanne Damas"],
+    "formula": {
+      "coreItems": [
+        { "category": "外套", "description": "黑色皮夹克或oversized西装", "importance": "must" },
+        { "category": "上装", "description": "白色T恤或条纹衫", "importance": "must" },
+        { "category": "下装", "description": "直筒牛仔裤", "importance": "must" },
+        { "category": "鞋履", "description": "芭蕾平底鞋或运动鞋", "importance": "recommended" },
+        { "category": "包袋", "description": "简约皮质单肩包", "importance": "recommended" },
+        { "category": "配饰", "description": "细链项链或小耳环", "importance": "optional" }
+      ],
+      "colorPalette": {
+        "primary": "#1A1A1A",
+        "secondary": "#FFFFFF",
+        "accent": "#C0C0C0",
+        "name": "黑白灰经典配色"
+      },
+      "materials": ["纯棉", "牛仔布", "皮革", "真丝", "羊毛"],
+      "avoidItems": ["过于精致的装饰", "夸张图案", "太多配饰", "过于紧身的剪裁", "亮片/水钻"]
+    },
+    "examples": [
+      { "id": "cg-ex1", "imageUrl": "https://picsum.photos/seed/cool-girl-1/400/500", "caption": "Kaia Gerber 街拍", "source": "Instagram" },
+      { "id": "cg-ex2", "imageUrl": "https://picsum.photos/seed/cool-girl-2/400/500", "caption": "法式极简穿搭", "source": "Pinterest" },
+      { "id": "cg-ex3", "imageUrl": "https://picsum.photos/seed/cool-girl-3/400/500", "caption": "Jeanne Damas 日常造型", "source": "Instagram" }
+    ],
+    "frequency": 1342,
+    "sources": [
+      { "source": "instagram", "count": 567 },
+      { "source": "xiaohongshu", "count": 456 },
+      { "source": "pinterest", "count": 319 }
+    ]
+  }
+}
