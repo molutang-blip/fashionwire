@@ -276,6 +276,15 @@ export interface RelatedItem {
 
 // ====== 风格关键词增强类型 ======
 
+// 预设造型选项
+export interface OutfitOption {
+  id: string;
+  name: string;                    // 如 "经典通勤"、"周末休闲"、"约会造型"
+  imageUrl: string;                // 完整造型图片
+  description?: string;            // 简短描述
+  colorScheme: string;             // 配色描述，如 "米白+灰"
+}
+
 // 配色方案
 export interface ColorPalette {
   primary: string;      // 主色 hex，如 "#1A1A1A"
@@ -316,6 +325,7 @@ export interface StyleKeywordDetail {
   origin?: string;                   // 起源/背景（可选）
   representativeFigures?: string[];  // 代表人物（可选），如 ["Sofia Richie", "Gwyneth Paltrow"]
   formula: StyleFormula;             // 穿搭公式
+  outfits: OutfitOption[];           // 预设造型（3套）
   examples: StyleExample[];          // 风格示例图（3-4张）
   frequency: number;                 // 热度频次（继承原有）
   sources: { source: TrendSource; count: number }[];  // 来源分布（继承原有）
@@ -324,6 +334,7 @@ export interface StyleKeywordDetail {
 // AI 试穿请求参数
 export interface AIFittingRequest {
   styleKeywordId: string;
+  outfitId: string;                  // 选中的造型 ID
   userPhoto: string;                 // base64 或 URL
   measurements?: {                   // 三围数据（可选）
     bust?: number;                   // 胸围 cm
