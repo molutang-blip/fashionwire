@@ -8,13 +8,28 @@ import type { AIFittingRequest, AIFittingResult } from '@/domain/types';
 // 模拟 API 延迟
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Mock 生成结果图片（基于风格返回不同的示例图）
+// Mock 生成结果图片（基于造型 ID 返回不同的示例图）
 const MOCK_GENERATED_IMAGES: Record<string, string> = {
-  'quiet-luxury': 'https://picsum.photos/seed/ai-quiet-luxury/600/800',
-  'old-money': 'https://picsum.photos/seed/ai-old-money/600/800',
-  'dopamine-dressing': 'https://picsum.photos/seed/ai-dopamine/600/800',
-  'maillard': 'https://picsum.photos/seed/ai-maillard/600/800',
-  'cool-girl': 'https://picsum.photos/seed/ai-cool-girl/600/800',
+  // 静奢风造型
+  'ql-outfit-1': 'https://picsum.photos/seed/ai-ql-1/600/800',
+  'ql-outfit-2': 'https://picsum.photos/seed/ai-ql-2/600/800',
+  'ql-outfit-3': 'https://picsum.photos/seed/ai-ql-3/600/800',
+  // 老钱风造型
+  'om-outfit-1': 'https://picsum.photos/seed/ai-om-1/600/800',
+  'om-outfit-2': 'https://picsum.photos/seed/ai-om-2/600/800',
+  'om-outfit-3': 'https://picsum.photos/seed/ai-om-3/600/800',
+  // 多巴胺穿搭造型
+  'dd-outfit-1': 'https://picsum.photos/seed/ai-dd-1/600/800',
+  'dd-outfit-2': 'https://picsum.photos/seed/ai-dd-2/600/800',
+  'dd-outfit-3': 'https://picsum.photos/seed/ai-dd-3/600/800',
+  // 美拉德色系造型
+  'ml-outfit-1': 'https://picsum.photos/seed/ai-ml-1/600/800',
+  'ml-outfit-2': 'https://picsum.photos/seed/ai-ml-2/600/800',
+  'ml-outfit-3': 'https://picsum.photos/seed/ai-ml-3/600/800',
+  // 清冷感造型
+  'cg-outfit-1': 'https://picsum.photos/seed/ai-cg-1/600/800',
+  'cg-outfit-2': 'https://picsum.photos/seed/ai-cg-2/600/800',
+  'cg-outfit-3': 'https://picsum.photos/seed/ai-cg-3/600/800',
 };
 
 /**
@@ -32,9 +47,9 @@ export async function generateStyleFitting(request: AIFittingRequest): Promise<A
     throw new Error('AI 服务暂时不可用，请稍后重试');
   }
 
-  // 返回 mock 结果
-  const generatedImageUrl = MOCK_GENERATED_IMAGES[request.styleKeywordId]
-    || `https://picsum.photos/seed/ai-${request.styleKeywordId}/600/800`;
+  // 优先根据 outfitId 返回对应图片，否则使用通用图片
+  const generatedImageUrl = MOCK_GENERATED_IMAGES[request.outfitId]
+    || `https://picsum.photos/seed/ai-${request.outfitId}/600/800`;
 
   return {
     generatedImageUrl,
@@ -55,6 +70,7 @@ export async function generateStyleFitting(request: AIFittingRequest): Promise<A
 //     },
 //     body: JSON.stringify({
 //       styleKeywordId: request.styleKeywordId,
+//       outfitId: request.outfitId,
 //       userPhoto: request.userPhoto,
 //       measurements: request.measurements,
 //     }),
