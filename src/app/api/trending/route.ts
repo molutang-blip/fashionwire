@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTrendingTopics, type TrendSource } from '@/lib/supabase';
+import { getTrendingTopics, type TrendSource } from '../../../lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
