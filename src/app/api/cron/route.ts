@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { crawlAll } from '@/services/crawlers';
+import { crawlAll } from '../../../services/crawlers';
 
 function validateCronSecret(request: NextRequest): boolean {
   const authHeader = request.headers.get('authorization');
