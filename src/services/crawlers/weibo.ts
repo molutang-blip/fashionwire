@@ -1,4 +1,4 @@
-import { insertTrendingTopics, logCrawl, type TrendDirection } from '@/lib/supabase';
+import { insertTrendingTopics, logCrawl, deleteOldTopics, type TrendDirection } from '@/lib/supabase';
 
 interface WeiboHotItem {
   word: string;
