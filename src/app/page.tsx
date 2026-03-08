@@ -9,9 +9,9 @@ import { DailyBriefing } from "@/components/DailyBriefing";
 import { TrendingSection } from "@/components/TrendingSection";
 import { BrandUpdatesSection } from "@/components/BrandUpdatesSection";
 import { StyleWordCloud } from "@/components/StyleWordCloud";
-import trendingRaw from "../data/trending_topics.json";
-import brandUpdatesRaw from "../data/brand_updates.json";
-import styleKeywordsRaw from "../data/style_keywords.json";
+import trendingRaw from "../../data/trending_topics.json";
+import brandUpdatesRaw from "../../data/brand_updates.json";
+import styleKeywordsRaw from "../../data/style_keywords.json";
 
 function formatTimeWindow(window: string): string {
   if (window === "realtime") return "实时";
