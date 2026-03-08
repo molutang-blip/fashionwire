@@ -1,9 +1,7 @@
-import { insertTrendingTopics, logCrawl, deleteOldTopics, type TrendDirection } from '@/lib/supabase';
+import { insertTrendingTopics, logCrawl, deleteOldTopics, deleteAllTopicsExcept, type TrendDirection } from '@/lib/supabase';
 
-// 动态导入 google-trends-api（避免服务端渲染问题）
 const googleTrends = require('google-trends-api');
 
-// 时尚关键词列表
 const FASHION_KEYWORDS = [
   'Met Gala',
   'Paris Fashion Week',
@@ -37,8 +35,8 @@ async function getKeywordTrend(keyword: string): Promise<TrendsResult | null> {
   try {
     const results = await googleTrends.interestOverTime({
       keyword: keyword,
-      startTime: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 最近7天
-      geo: '', // 全球
+      startTime: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+      geo: '',
     });
 
     const data = JSON.parse(results);
@@ -58,7 +56,6 @@ async function getKeywordTrend(keyword: string): Promise<TrendsResult | null> {
     if (currentValue > previousValue * 1.1) trend = 'up';
     else if (currentValue < previousValue * 0.9) trend = 'down';
     
-    // 将 0-100 的 Google 指数转换为更大的数值
     const searchVolume = currentValue * 50000;
 
     return {
@@ -88,7 +85,6 @@ export async function crawlGoogleTrends(): Promise<{
   try {
     console.log('[Google Trends] Starting to fetch fashion keywords...');
     
-    // 并发获取所有关键词趋势（限制并发数避免被封）
     const batchSize = 5;
     const results: TrendsResult[] = [];
     
@@ -100,13 +96,11 @@ export async function crawlGoogleTrends(): Promise<{
       
       results.push(...batchResults.filter((r): r is TrendsResult => r !== null));
       
-      // 延迟 1 秒避免请求过快
       if (i + batchSize < FASHION_KEYWORDS.length) {
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
     }
 
-    // 按搜索量排序，取前 15
     const topTrends = results
       .sort((a, b) => b.searchVolume - a.searchVolume)
       .slice(0, 15);
@@ -127,10 +121,10 @@ export async function crawlGoogleTrends(): Promise<{
       raw_data: item as unknown as Record<string, unknown>,
     }));
 
-    // 先删除旧数据
+    // 先删除所有非 Google 数据，再删除旧的 Google 数据
+    await deleteAllTopicsExcept('google');
     await deleteOldTopics('google', 50);
     
-    // 插入新数据
     await insertTrendingTopics(topics);
     
     const duration = Date.now() - startTime;
@@ -162,7 +156,6 @@ export async function crawlGoogleTrends(): Promise<{
   }
 }
 
-// 备用 Mock 函数
 export async function crawlGoogleTrendsMock(): Promise<{
   success: boolean;
   count: number;
