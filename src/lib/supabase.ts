@@ -71,6 +71,33 @@ export async function insertTrendingTopics(
   return data;
 }
 
+// 删除某个来源的旧数据（只保留最新N条）
+export async function deleteOldTopics(source: TrendSource, keepCount: number = 50) {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin client not available');
+  }
+
+  // 获取该来源的所有数据ID，按时间倒序
+  const { data: oldData, error: selectError } = await supabaseAdmin
+    .from('trending_topics')
+    .select('id, created_at')
+    .eq('source', source)
+    .order('created_at', { ascending: false });
+
+  if (selectError) throw selectError;
+  
+  if (oldData && oldData.length > keepCount) {
+    const idsToDelete = oldData.slice(keepCount).map(d => d.id);
+    const { error: deleteError } = await supabaseAdmin
+      .from('trending_topics')
+      .delete()
+      .in('id', idsToDelete);
+    
+    if (deleteError) throw deleteError;
+    console.log(`Deleted ${idsToDelete.length} old topics from ${source}`);
+  }
+}
+
 export async function logCrawl(log: Omit<DBCrawlLog, 'id' | 'created_at'>) {
   if (!supabaseAdmin) {
     throw new Error('Supabase admin client not available');
@@ -91,9 +118,13 @@ export async function getTrendingTopics(options?: {
   limit?: number;
   offset?: number;
 }) {
+  // 只获取最近24小时的数据
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  
   let query = supabase
     .from('trending_topics')
     .select('*')
+    .gte('created_at', oneDayAgo)  // 只查24小时内的
     .order('score', { ascending: false })
     .order('created_at', { ascending: false });
 
@@ -110,7 +141,6 @@ export async function getTrendingTopics(options?: {
   }
 
   const { data, error } = await query;
-
   if (error) throw error;
   return data as DBTrendingTopic[];
 }
