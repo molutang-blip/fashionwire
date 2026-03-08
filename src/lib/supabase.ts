@@ -47,4 +47,111 @@ export interface DBCrawlLog {
   source: TrendSource;
   status: 'success' | 'failed' | 'partial';
   items_count: number;
-  error_message: string | null
+  error_message: string | null;
+  duration_ms: number | null;
+  created_at: string;
+}
+
+export async function insertTrendingTopics(
+  topics: Omit<DBTrendingTopic, 'id' | 'created_at' | 'updated_at'>[]
+) {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin client not available');
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from('trending_topics')
+    .upsert(topics, {
+      onConflict: 'source,source_id',
+      ignoreDuplicates: false,
+    })
+    .select();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteOldTopics(source: TrendSource, keepCount: number = 50) {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin client not available');
+  }
+
+  const { data: oldData, error: selectError } = await supabaseAdmin
+    .from('trending_topics')
+    .select('id, created_at')
+    .eq('source', source)
+    .order('created_at', { ascending: false });
+
+  if (selectError) throw selectError;
+  
+  if (oldData && oldData.length > keepCount) {
+    const idsToDelete = oldData.slice(keepCount).map(d => d.id);
+    const { error: deleteError } = await supabaseAdmin
+      .from('trending_topics')
+      .delete()
+      .in('id', idsToDelete);
+    
+    if (deleteError) throw deleteError;
+    console.log(`Deleted ${idsToDelete.length} old topics from ${source}`);
+  }
+}
+
+export async function deleteAllTopicsExcept(keepSource: TrendSource) {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin client not available');
+  }
+
+  const { error } = await supabaseAdmin
+    .from('trending_topics')
+    .delete()
+    .neq('source', keepSource);
+
+  if (error) throw error;
+  console.log(`Deleted all topics except source: ${keepSource}`);
+}
+
+export async function logCrawl(log: Omit<DBCrawlLog, 'id' | 'created_at'>) {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin client not available');
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from('crawl_logs')
+    .insert(log)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getTrendingTopics(options?: {
+  source?: TrendSource;
+  limit?: number;
+  offset?: number;
+}) {
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  
+  let query = supabase
+    .from('trending_topics')
+    .select('*')
+    .gte('created_at', oneDayAgo)
+    .order('score', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (options?.source) {
+    query = query.eq('source', options.source);
+  }
+
+  if (options?.limit) {
+    query = query.limit(options.limit);
+  }
+
+  if (options?.offset) {
+    query = query.range(options.offset, options.offset + (options.limit || 20) - 1);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data as DBTrendingTopic[];
+}
