@@ -1,4 +1,4 @@
-import { insertTrendingTopics, logCrawl, type TrendDirection } from '@/lib/supabase';
+import { insertTrendingTopics, logCrawl, deleteOldTopics, type TrendDirection } from '@/lib/supabase';
 
 interface XiaohongshuHotItem {
   id: string;
@@ -58,7 +58,7 @@ export async function crawlXiaohongshuHotMock(): Promise<{
       raw_data: item as unknown as Record<string, unknown>,
     }));
 
-    await insertTrendingTopics(topics);
+    await deleteOldTopics('xiaohongshu', 50);await insertTrendingTopics(topics);
 
     const duration = Date.now() - startTime;
 
