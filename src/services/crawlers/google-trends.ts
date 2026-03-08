@@ -1,57 +1,75 @@
 import { insertTrendingTopics, logCrawl, deleteOldTopics, type TrendDirection } from '@/lib/supabase';
 
+// 动态导入 google-trends-api（避免服务端渲染问题）
+const googleTrends = require('google-trends-api');
+
 // 时尚关键词列表
 const FASHION_KEYWORDS = [
-  { keyword: 'Met Gala', category: 'event' },
-  { keyword: 'Paris Fashion Week', category: 'event' },
-  { keyword: 'Milan Fashion Week', category: 'event' },
-  { keyword: 'New York Fashion Week', category: 'event' },
-  { keyword: 'Chanel', category: 'brand' },
-  { keyword: 'Louis Vuitton', category: 'brand' },
-  { keyword: 'Gucci', category: 'brand' },
-  { keyword: 'Dior', category: 'brand' },
-  { keyword: 'Prada', category: 'brand' },
-  { keyword: 'Hermes', category: 'brand' },
-  { keyword: 'Balenciaga', category: 'brand' },
-  { keyword: 'Versace', category: 'brand' },
-  { keyword: 'YSL', category: 'brand' },
-  { keyword: 'Burberry', category: 'brand' },
-  { keyword: 'Celine', category: 'brand' },
+  'Met Gala',
+  'Paris Fashion Week',
+  'Milan Fashion Week',
+  'New York Fashion Week',
+  'London Fashion Week',
+  'Chanel',
+  'Louis Vuitton',
+  'Gucci',
+  'Dior',
+  'Prada',
+  'Hermes',
+  'Balenciaga',
+  'Versace',
+  'YSL',
+  'Burberry',
+  'Celine',
+  'Valentino',
+  'Givenchy',
+  'Fendi',
+  'Bottega Veneta',
 ];
 
-interface GoogleTrendsItem {
+interface TrendsResult {
   keyword: string;
   searchVolume: number;
   trend: 'up' | 'down' | 'stable';
-  category: string;
 }
 
-// 模拟 Google Trends 数据（后续替换为真实 API）
-function generateMockTrends(): GoogleTrendsItem[] {
-  const now = new Date();
-  
-  // 基于时间生成不同的趋势数据
-  return FASHION_KEYWORDS.map((item, index) => {
-    // 模拟波动：根据日期和索引生成伪随机数
-    const baseVolume = 100000;
-    const randomFactor = Math.sin(now.getDate() + index) * 0.5 + 1; // 0.5 ~ 1.5
-    const eventBoost = item.category === 'event' ? 2 : 1; // 事件类热度更高
+async function getKeywordTrend(keyword: string): Promise<TrendsResult | null> {
+  try {
+    const results = await googleTrends.interestOverTime({
+      keyword: keyword,
+      startTime: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 最近7天
+      geo: '', // 全球
+    });
+
+    const data = JSON.parse(results);
     
-    const searchVolume = Math.round(baseVolume * randomFactor * eventBoost * (Math.random() * 2 + 1));
+    if (!data.default || !data.default.timelineData || data.default.timelineData.length === 0) {
+      return null;
+    }
+
+    const timelineData = data.default.timelineData;
+    const latest = timelineData[timelineData.length - 1];
+    const previous = timelineData[timelineData.length - 2];
     
-    // 模拟趋势方向
-    const trendRandom = Math.random();
+    const currentValue = latest.value[0];
+    const previousValue = previous ? previous.value[0] : currentValue;
+    
     let trend: 'up' | 'down' | 'stable' = 'stable';
-    if (trendRandom > 0.6) trend = 'up';
-    else if (trendRandom < 0.4) trend = 'down';
+    if (currentValue > previousValue * 1.1) trend = 'up';
+    else if (currentValue < previousValue * 0.9) trend = 'down';
     
+    // 将 0-100 的 Google 指数转换为更大的数值
+    const searchVolume = currentValue * 50000;
+
     return {
-      keyword: item.keyword,
+      keyword,
       searchVolume,
       trend,
-      category: item.category,
     };
-  }).sort((a, b) => b.searchVolume - a.searchVolume); // 按搜索量排序
+  } catch (error) {
+    console.error(`Failed to fetch trend for ${keyword}:`, error);
+    return null;
+  }
 }
 
 function getTrendDirection(trend: string): TrendDirection {
@@ -60,7 +78,7 @@ function getTrendDirection(trend: string): TrendDirection {
   return 'flat';
 }
 
-export async function crawlGoogleTrendsMock(): Promise<{
+export async function crawlGoogleTrends(): Promise<{
   success: boolean;
   count: number;
   error?: string;
@@ -68,17 +86,41 @@ export async function crawlGoogleTrendsMock(): Promise<{
   const startTime = Date.now();
   
   try {
-    const trendsData = generateMockTrends();
+    console.log('[Google Trends] Starting to fetch fashion keywords...');
     
-    // 只取前 15 条
-    const topTrends = trendsData.slice(0, 15);
+    // 并发获取所有关键词趋势（限制并发数避免被封）
+    const batchSize = 5;
+    const results: TrendsResult[] = [];
+    
+    for (let i = 0; i < FASHION_KEYWORDS.length; i += batchSize) {
+      const batch = FASHION_KEYWORDS.slice(i, i + batchSize);
+      const batchResults = await Promise.all(
+        batch.map(keyword => getKeywordTrend(keyword))
+      );
+      
+      results.push(...batchResults.filter((r): r is TrendsResult => r !== null));
+      
+      // 延迟 1 秒避免请求过快
+      if (i + batchSize < FASHION_KEYWORDS.length) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
 
-    const topics = topTrends.map((item, index) => ({
+    // 按搜索量排序，取前 15
+    const topTrends = results
+      .sort((a, b) => b.searchVolume - a.searchVolume)
+      .slice(0, 15);
+
+    if (topTrends.length === 0) {
+      throw new Error('No trend data fetched');
+    }
+
+    const topics = topTrends.map((item) => ({
       title_zh: item.keyword,
       title_en: item.keyword,
-      score: item.searchVolume,
+      score: Math.round(item.searchVolume),
       source: 'google' as const,
-      source_label: item.category === 'event' ? '时尚事件' : '奢侈品牌',
+      source_label: 'Google Trends',
       direction: getTrendDirection(item.trend),
       source_url: `https://trends.google.com/trends/explore?q=${encodeURIComponent(item.keyword)}`,
       source_id: `google_trends_${item.keyword}_${new Date().toISOString().split('T')[0]}`,
@@ -100,10 +142,13 @@ export async function crawlGoogleTrendsMock(): Promise<{
       duration_ms: duration,
     });
 
+    console.log(`[Google Trends] Fetched ${topics.length} trends`);
     return { success: true, count: topics.length };
   } catch (error) {
     const duration = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : '未知错误';
+    
+    console.error('[Google Trends] Error:', errorMessage);
     
     await logCrawl({
       source: 'google',
@@ -117,6 +162,11 @@ export async function crawlGoogleTrendsMock(): Promise<{
   }
 }
 
-export async function crawlGoogleTrends() {
-  return crawlGoogleTrendsMock();
+// 保留 Mock 作为备用
+export async function crawlGoogleTrendsMock(): Promise<{
+  success: boolean;
+  count: number;
+  error?: string;
+}> {
+  return crawlGoogleTrends();
 }
