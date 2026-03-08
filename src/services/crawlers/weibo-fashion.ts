@@ -1,4 +1,4 @@
-import { insertTrendingTopics, logCrawl, type TrendDirection } from '@/lib/supabase';
+import { insertTrendingTopics, logCrawl, deleteOldTopics, type TrendDirection } from '@/lib/supabase';
 
 // 微博时尚话题 Mock 数据（后续替换为真实抓取）
 const FASHION_KEYWORDS = [
@@ -63,7 +63,7 @@ export async function crawlWeiboFashionMock(): Promise<{
       { word: '卡地亚高级珠宝展', hot_word_num: 1450000, category: '时尚', flag: 1 },
     ];
 
-    // 过滤出时尚相关话题（这里全是，实际抓取时需要过滤）
+    // 过滤出时尚相关话题
     const fashionTopics = mockData.filter(item => isFashionRelated(item.word));
 
     const topics = fashionTopics.map((item) => ({
@@ -74,10 +74,14 @@ export async function crawlWeiboFashionMock(): Promise<{
       source_label: getSourceLabel(item),
       direction: getTrendDirection(item),
       source_url: `https://s.weibo.com/weibo?q=${encodeURIComponent(item.word)}`,
-      source_id: `weibo_fashion_${item.word}_${new Date().toISOString().split('T')[0]}`,
+      source_id: `weibo_fashion_${item.word}_${Date.now()}`, // 用时间戳确保唯一
       raw_data: item as unknown as Record<string, unknown>,
     }));
 
+    // 先删除旧数据，只保留最新50条
+    await deleteOldTopics('weibo', 50);
+    
+    // 插入新数据
     await insertTrendingTopics(topics);
     
     const duration = Date.now() - startTime;
