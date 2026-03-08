@@ -162,7 +162,7 @@ export async function crawlGoogleTrends(): Promise<{
   }
 }
 
-// 保留 Mock 作为备用
+// 备用 Mock 函数
 export async function crawlGoogleTrendsMock(): Promise<{
   success: boolean;
   count: number;
