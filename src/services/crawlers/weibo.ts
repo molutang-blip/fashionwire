@@ -58,7 +58,7 @@ export async function crawlWeiboHotMock(): Promise<{
       raw_data: item as unknown as Record<string, unknown>,
     }));
 
-    await insertTrendingTopics(topics);
+    await deleteOldTopics('weibo', 50);await insertTrendingTopics(topics);
 
     const duration = Date.now() - startTime;
 
