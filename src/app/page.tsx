@@ -9,9 +9,31 @@ import { DailyBriefing } from "@/components/DailyBriefing";
 import { TrendingSection } from "@/components/TrendingSection";
 import { BrandUpdatesSection } from "@/components/BrandUpdatesSection";
 import { StyleWordCloud } from "@/components/StyleWordCloud";
-import trendingRaw from "../../data/trending_topics.json";
 import brandUpdatesRaw from "../../data/brand_updates.json";
 import styleKeywordsRaw from "../../data/style_keywords.json";
+
+// 从 API 获取热榜数据
+async function getTrendingTopics(): Promise<TrendingTopic[]> {
+  const res = await fetch('https://fashionwire.vercel.app/api/trending', {
+    next: { revalidate: 60 } // 每分钟重新验证
+  });
+  
+  if (!res.ok) {
+    throw new Error('Failed to fetch trending topics');
+  }
+  
+  const data = await res.json();
+  
+  return data.data.map((item: any) => ({
+    id: item.id,
+    titleZh: item.titleZh,
+    titleEn: item.titleEn,
+    score: item.score,
+    sourceLabel: item.sourceLabel,
+    direction: item.direction,
+    timestamp: item.timestamp
+  }));
+}
 
 function formatTimeWindow(window: string): string {
   if (window === "realtime") return "实时";
@@ -31,16 +53,6 @@ function mapToTrendSource(name: string): TrendSource {
   if (lower.includes("taobao") || lower.includes("淘宝")) return "taobao";
   return "instagram";
 }
-
-const MOCK_TRENDING: TrendingTopic[] = (trendingRaw as any[]).map((item) => ({
-  id: item.id,
-  titleZh: item.title_zh,
-  titleEn: item.title_en,
-  score: item.score,
-  sourceLabel: item.sources,
-  direction: item.direction,
-  timestamp: formatTimeWindow(item.time_window)
-}));
 
 const MOCK_BRAND_UPDATES: BrandUpdate[] = (brandUpdatesRaw as any[]).map((item) => ({
   id: item.id,
@@ -81,7 +93,10 @@ const DAILY_BRIEFING_DATA = {
   focusArea: "奢侈品牌女装 / 包袋"
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  // 服务端获取真实数据
+  const trendingData = await getTrendingTopics();
+  
   return (
     <div className="space-y-8 lg:space-y-10">
       {/* Hero: Daily Briefing + Today Angle */}
@@ -92,7 +107,7 @@ export default function HomePage() {
 
       {/* Global Fashion Trending + Brand Intelligence */}
       <section id="trending" className="grid gap-6 lg:grid-cols-[1.3fr,1.1fr] items-start">
-        <TrendingSection topics={MOCK_TRENDING} />
+        <TrendingSection topics={trendingData} />
         <BrandUpdatesSection updates={MOCK_BRAND_UPDATES} maxVisible={5} />
       </section>
 
