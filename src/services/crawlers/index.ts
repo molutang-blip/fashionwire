@@ -1,7 +1,5 @@
-export { crawlWeiboHot, crawlWeiboHotMock } from './weibo';
-export { crawlXiaohongshuHot, crawlXiaohongshuHotMock } from './xiaohongshu';
-export { crawlWeiboFashion, crawlWeiboFashionMock } from './weibo-fashion';
 export { crawlGoogleTrends, crawlGoogleTrendsMock } from './google-trends';
+export { crawlFashionMedia, crawlFashionMediaMock } from './fashion-media';
 
 interface CrawlResult {
   success: boolean;
@@ -11,49 +9,29 @@ interface CrawlResult {
 
 export async function crawlAll(useMock = false) {
   const results: Record<string, CrawlResult> = {
-    weibo: { success: false, count: 0 },
-    xiaohongshu: { success: false, count: 0 },
-    weiboFashion: { success: false, count: 0 },
     google: { success: false, count: 0 },
+    fashionMedia: { success: false, count: 0 },
   };
 
-  const [weiboResult, xiaohongshuResult, weiboFashionResult, googleResult] = await Promise.allSettled([
-    useMock
-      ? import('./weibo').then(m => m.crawlWeiboHotMock())
-      : import('./weibo').then(m => m.crawlWeiboHot()),
-    useMock
-      ? import('./xiaohongshu').then(m => m.crawlXiaohongshuHotMock())
-      : import('./xiaohongshu').then(m => m.crawlXiaohongshuHot()),
-    useMock
-      ? import('./weibo-fashion').then(m => m.crawlWeiboFashionMock())
-      : import('./weibo-fashion').then(m => m.crawlWeiboFashion()),
+  const [googleResult, fashionMediaResult] = await Promise.allSettled([
     useMock
       ? import('./google-trends').then(m => m.crawlGoogleTrendsMock())
       : import('./google-trends').then(m => m.crawlGoogleTrends()),
+    useMock
+      ? import('./fashion-media').then(m => m.crawlFashionMediaMock())
+      : import('./fashion-media').then(m => m.crawlFashionMedia()),
   ]);
-
-  if (weiboResult.status === 'fulfilled') {
-    results.weibo = weiboResult.value;
-  } else {
-    results.weibo.error = weiboResult.reason?.message || '未知错误';
-  }
-
-  if (xiaohongshuResult.status === 'fulfilled') {
-    results.xiaohongshu = xiaohongshuResult.value;
-  } else {
-    results.xiaohongshu.error = xiaohongshuResult.reason?.message || '未知错误';
-  }
-
-  if (weiboFashionResult.status === 'fulfilled') {
-    results.weiboFashion = weiboFashionResult.value;
-  } else {
-    results.weiboFashion.error = weiboFashionResult.reason?.message || '未知错误';
-  }
 
   if (googleResult.status === 'fulfilled') {
     results.google = googleResult.value;
   } else {
     results.google.error = googleResult.reason?.message || '未知错误';
+  }
+
+  if (fashionMediaResult.status === 'fulfilled') {
+    results.fashionMedia = fashionMediaResult.value;
+  } else {
+    results.fashionMedia.error = fashionMediaResult.reason?.message || '未知错误';
   }
 
   return results;
