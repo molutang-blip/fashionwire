@@ -1,6 +1,7 @@
 export { crawlWeiboHot, crawlWeiboHotMock } from './weibo';
 export { crawlXiaohongshuHot, crawlXiaohongshuHotMock } from './xiaohongshu';
 export { crawlWeiboFashion, crawlWeiboFashionMock } from './weibo-fashion';
+export { crawlGoogleTrends, crawlGoogleTrendsMock } from './google-trends';
 
 interface CrawlResult {
   success: boolean;
@@ -13,9 +14,10 @@ export async function crawlAll(useMock = false) {
     weibo: { success: false, count: 0 },
     xiaohongshu: { success: false, count: 0 },
     weiboFashion: { success: false, count: 0 },
+    google: { success: false, count: 0 },
   };
 
-  const [weiboResult, xiaohongshuResult, weiboFashionResult] = await Promise.allSettled([
+  const [weiboResult, xiaohongshuResult, weiboFashionResult, googleResult] = await Promise.allSettled([
     useMock
       ? import('./weibo').then(m => m.crawlWeiboHotMock())
       : import('./weibo').then(m => m.crawlWeiboHot()),
@@ -25,6 +27,9 @@ export async function crawlAll(useMock = false) {
     useMock
       ? import('./weibo-fashion').then(m => m.crawlWeiboFashionMock())
       : import('./weibo-fashion').then(m => m.crawlWeiboFashion()),
+    useMock
+      ? import('./google-trends').then(m => m.crawlGoogleTrendsMock())
+      : import('./google-trends').then(m => m.crawlGoogleTrends()),
   ]);
 
   if (weiboResult.status === 'fulfilled') {
@@ -43,6 +48,12 @@ export async function crawlAll(useMock = false) {
     results.weiboFashion = weiboFashionResult.value;
   } else {
     results.weiboFashion.error = weiboFashionResult.reason?.message || '未知错误';
+  }
+
+  if (googleResult.status === 'fulfilled') {
+    results.google = googleResult.value;
+  } else {
+    results.google.error = googleResult.reason?.message || '未知错误';
   }
 
   return results;
