@@ -92,6 +92,20 @@ export async function deleteOldTopics(source: TrendSource, keepCount: number = 5
   }
 }
 
+export async function deleteAllTopicsExcept(keepSource: TrendSource) {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin client not available');
+  }
+
+  const { error } = await supabaseAdmin
+    .from('trending_topics')
+    .delete()
+    .neq('source', keepSource);
+
+  if (error) throw error;
+  console.log(`Deleted all topics except source: ${keepSource}`);
+}
+
 export async function logCrawl(log: Omit<DBCrawlLog, 'id' | 'created_at'>) {
   if (!supabaseAdmin) {
     throw new Error('Supabase admin client not available');
@@ -130,7 +144,7 @@ export async function getTrendingTopics(options?: {
   }
 
   if (options?.offset) {
-    query = range(options.offset, options.offset + (options.limit || 20) - 1);
+    query = query.range(options.offset, options.offset + (options.limit || 20) - 1);
   }
 
   const { data, error } = await query;
