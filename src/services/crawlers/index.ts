@@ -1,31 +1,13 @@
 import { crawlGoogleTrends } from './google-trends';
 import { crawlFashionMedia } from './fashion-media';
+import { crawlReddit } from './reddit';
 
-interface CrawlResult {
-  success: boolean;
-  count: number;
-  error?: string;
-}
-
-export async function crawlAll(useMock = false) {
-  const results: Record<string, CrawlResult> = {
-    google: { success: false, count: 0 },
-    fashionMedia: { success: false, count: 0 },
+export async function crawlAll() {
+  const results = {
+    google: await crawlGoogleTrends().catch(e => ({ success: false, error: e.message })),
+    fashionMedia: await crawlFashionMedia().catch(e => ({ success: false, error: e.message })),
+    reddit: await crawlReddit().catch(e => ({ success: false, error: e.message }))
   };
-
-  try {
-    const googleResult = await crawlGoogleTrends();
-    results.google = googleResult;
-  } catch (error) {
-    results.google.error = error instanceof Error ? error.message : '未知错误';
-  }
-
-  try {
-    const mediaResult = await crawlFashionMedia();
-    results.fashionMedia = mediaResult;
-  } catch (error) {
-    results.fashionMedia.error = error instanceof Error ? error.message : '未知错误';
-  }
-
+  
   return results;
 }
