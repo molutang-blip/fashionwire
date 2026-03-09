@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     
     console.log(`[Cron] 开始执行数据抓取任务 (mock=${useMock})`);
     
-    const results = await crawlAll(useMock);
+    const results = await crawlAll();
     const duration = Date.now() - startTime;
     
     console.log(`[Cron] 抓取完成，耗时 ${duration}ms`, results);
