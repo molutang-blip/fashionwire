@@ -4,13 +4,8 @@
 
 CREATE TYPE trend_source AS ENUM (
   'instagram',
-  'tiktok',
-  'xiaohongshu',
-  'weibo',
+  'reddit',
   'google',
-  'baidu',
-  'amazon',
-  'taobao'
 );
 
 CREATE TYPE trend_direction AS ENUM ('up', 'down', 'flat');
