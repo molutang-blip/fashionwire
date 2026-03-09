@@ -15,15 +15,11 @@ export const supabaseAdmin = supabaseServiceKey
     })
   : null;
 
+// 只留 Phase 1 需要的3个数据源
 export type TrendSource =
-  | 'instagram'
-  | 'tiktok'
-  | 'xiaohongshu'
-  | 'weibo'
   | 'google'
-  | 'baidu'
-  | 'amazon'
-  | 'taobao';
+  | 'instagram'
+  | 'reddit';
 
 export type TrendDirection = 'up' | 'down' | 'flat';
 
@@ -37,7 +33,7 @@ export interface DBTrendingTopic {
   direction: TrendDirection;
   source_url: string | null;
   source_id: string | null;
-  raw_data: Record<string, unknown> | null;
+  raw_data: Record<string, any> | null;
   created_at: string;
   updated_at: string;
 }
@@ -83,31 +79,17 @@ export async function deleteOldTopics(source: TrendSource, keepCount: number = 5
     .order('created_at', { ascending: false });
 
   if (selectError) throw selectError;
-  
+
   if (oldData && oldData.length > keepCount) {
     const idsToDelete = oldData.slice(keepCount).map(d => d.id);
     const { error: deleteError } = await supabaseAdmin
       .from('trending_topics')
       .delete()
       .in('id', idsToDelete);
-    
+
     if (deleteError) throw deleteError;
     console.log(`Deleted ${idsToDelete.length} old topics from ${source}`);
   }
-}
-
-export async function deleteAllTopicsExcept(keepSource: TrendSource) {
-  if (!supabaseAdmin) {
-    throw new Error('Supabase admin client not available');
-  }
-
-  const { error } = await supabaseAdmin
-    .from('trending_topics')
-    .delete()
-    .neq('source', keepSource);
-
-  if (error) throw error;
-  console.log(`Deleted all topics except source: ${keepSource}`);
 }
 
 export async function logCrawl(log: Omit<DBCrawlLog, 'id' | 'created_at'>) {
@@ -131,7 +113,7 @@ export async function getTrendingTopics(options?: {
   offset?: number;
 }) {
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  
+
   let query = supabase
     .from('trending_topics')
     .select('*')
@@ -148,7 +130,7 @@ export async function getTrendingTopics(options?: {
   }
 
   if (options?.offset) {
-    query = query.range(options.offset, options.offset + (options.limit || 20) - 1);
+    query = range(options.offset, options.offset + (options.limit || 20) - 1);
   }
 
   const { data, error } = await query;
