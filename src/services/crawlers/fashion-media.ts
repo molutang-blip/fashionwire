@@ -73,7 +73,7 @@ export async function crawlFashionMedia(): Promise<{
       .slice(0, 15);
 
     const topics = sortedArticles.map((item, index) => ({
-      title_zh: item.title,
+      title_zh: generateChineseTitle(item.title),
       title_en: item.title,
       score: Math.round(1000000 - index * 50000),
       source: 'instagram' as const, // 用 instagram 代表国际媒体
