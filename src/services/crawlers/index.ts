@@ -9,5 +9,6 @@ export async function crawlAll() {
     reddit: await crawlReddit().catch(e => ({ success: false, error: e.message }))
   };
   
+  console.log('Crawl results:', results);
   return results;
 }
