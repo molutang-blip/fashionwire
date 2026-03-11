@@ -6,23 +6,71 @@ import type { DBTrendingTopic } from '@/domain/types';
 import type { EntitySet, EntityType } from '@/domain/types';
 import { extractEntities, entityOverlap, mergeEntities, pickTopEntity } from './entities';
 
-// ----- 术语映射词典 -----
+// ----- 术语映射词典（大幅扩展） -----
 const TERM_MAP: [RegExp, string][] = [
+  // 时装周 & 秀场
   [/fashion week/gi, '时装周'],
+  [/runway|catwalk/gi, '秀场'],
+  [/haute couture/gi, '高级定制'],
+  [/resort/gi, '度假系列'],
+  [/ready[- ]to[- ]wear|RTW/gi, '成衣系列'],
+  [/pre[- ]fall/gi, '早秋系列'],
+  [/couture/gi, '高定'],
+  // 系列 & 发布
   [/spring\/summer|spring summer|ss\d{2}/gi, '春夏系列'],
   [/fall\/winter|fall winter|fw\d{2}/gi, '秋冬系列'],
-  [/collaboration|collab\b/gi, '联名合作'],
   [/collection/gi, '系列发布'],
   [/launch|release|drop\b/gi, '新品发售'],
-  [/campaign/gi, '广告大片'],
-  [/streetwear/gi, '街头服饰'],
-  [/haute couture/gi, '高级定制'],
-  [/runway|catwalk/gi, '秀场'],
+  [/debut/gi, '首次亮相'],
+  [/unveil|reveal/gi, '揭晓'],
   [/lookbook/gi, '造型手册'],
+  [/campaign/gi, '广告大片'],
+  // 合作 & 商业
+  [/collaboration|collab\b/gi, '联名合作'],
+  [/partnership/gi, '合作'],
+  [/acquisition|acquire/gi, '收购'],
+  [/merger/gi, '合并'],
+  [/IPO|going public/gi, '上市'],
+  [/revenue|sales|profit/gi, '业绩'],
+  [/store|boutique|flagship/gi, '门店'],
+  [/retail/gi, '零售'],
+  [/e[- ]commerce|online shop/gi, '电商'],
+  // 风格 & 趋势
+  [/streetwear/gi, '街头服饰'],
   [/vintage/gi, '复古'],
   [/minimalist/gi, '极简风格'],
-  [/sustainable/gi, '可持续时尚'],
-  [/resort/gi, '度假系列'],
+  [/sustainable|sustainability|eco[- ]friendly/gi, '可持续时尚'],
+  [/luxury/gi, '奢侈品'],
+  [/athleisure/gi, '运动休闲'],
+  [/denim/gi, '牛仔'],
+  [/sneaker/gi, '球鞋'],
+  [/handbag|bag\b/gi, '手袋'],
+  [/accessori/gi, '配饰'],
+  [/jewelry|jewellery/gi, '珠宝'],
+  [/watch|timepiece/gi, '腕表'],
+  [/fragrance|perfume/gi, '香水'],
+  [/beauty|makeup|cosmetic/gi, '美妆'],
+  [/skincare/gi, '护肤'],
+  // 人物 & 事件
+  [/celebrity|celeb\b/gi, '名人'],
+  [/influencer/gi, '博主'],
+  [/model\b/gi, '模特'],
+  [/designer/gi, '设计师'],
+  [/creative director/gi, '创意总监'],
+  [/ambassador/gi, '品牌大使'],
+  [/red carpet/gi, '红毯'],
+  [/award|gala/gi, '颁奖典礼'],
+  [/exhibition|exhibit/gi, '展览'],
+  [/interview/gi, '专访'],
+  [/controversy|scandal/gi, '争议'],
+  [/trend(?:ing|s)?\b/gi, '趋势'],
+  [/viral/gi, '爆款'],
+  [/sold out/gi, '售罄'],
+  [/waitlist/gi, '排队抢购'],
+  [/iconic/gi, '经典'],
+  [/rebrand/gi, '品牌重塑'],
+  [/logo/gi, '标识'],
+  [/outfit|look\b|style/gi, '穿搭'],
 ];
 
 /** 标签生成规则 */
@@ -37,6 +85,13 @@ const TAG_RULES: [RegExp, string][] = [
   [/collection|系列/i, '系列发布'],
   [/met gala/i, 'Met Gala'],
   [/coachella/i, 'Coachella'],
+  [/sneaker|球鞋/i, '球鞋'],
+  [/luxury|奢侈/i, '奢侈品'],
+  [/beauty|美妆|makeup/i, '美妆'],
+  [/jewelry|珠宝/i, '珠宝'],
+  [/bag|handbag|手袋/i, '手袋'],
+  [/vintage|复古/i, '复古'],
+  [/trend|趋势/i, '趋势'],
 ];
 
 // ----- 带实体信息的原始数据 -----
@@ -206,13 +261,21 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
   const firstPerson = people[0] || '';
   const firstEvent = events[0] || '';
 
-  // 从原始标题中检测事件关键词
-  const allText = group.topics.map(t => t.topic.title_en || '').join(' ');
-  let eventZh = '';
+  // 从原始标题中检测所有匹配的事件关键词
+  const allText = group.topics.map(t =>
+    [t.topic.title_en || '', t.topic.title_zh || ''].join(' ')
+  ).join(' ');
+
+  // 收集所有匹配到的中文术语（最多3个）
+  const matchedTerms: string[] = [];
   for (const [re, zh] of TERM_MAP) {
-    if (re.test(allText)) { eventZh = zh; break; }
+    re.lastIndex = 0; // 重置正则状态
+    if (re.test(allText) && !matchedTerms.includes(zh)) {
+      matchedTerms.push(zh);
+      if (matchedTerms.length >= 3) break;
+    }
   }
-  if (!eventZh && firstEvent) eventZh = firstEvent;
+  const eventZh = matchedTerms[0] || '';
 
   // 情绪词
   const buzzwords = ['引发关注', '引发热议', '备受瞩目', '成为焦点', '持续升温'];
@@ -236,14 +299,84 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
     zh = `${firstPerson} ${eventZh || '时尚动态'}${buzz}`;
   } else if (firstEvent) {
     zh = `${firstEvent} ${buzz}`;
+  } else if (matchedTerms.length >= 2) {
+    // 无实体但有多个术语匹配
+    zh = `${matchedTerms[0]}｜${matchedTerms[1]} ${buzz}`;
+  } else if (matchedTerms.length === 1) {
+    // 无实体但有一个术语
+    zh = `时尚${matchedTerms[0]} ${buzz}`;
   } else {
-    // 兜底：用原始标题做简单翻译
-    const raw = group.topics[0]?.topic.title_en || group.topics[0]?.topic.title_zh || '时尚热点';
-    zh = raw.length > 40 ? raw.substring(0, 40) + '...' : raw;
+    // 最终兜底：将英文标题做关键词提取+翻译
+    zh = fallbackTitle(allText, buzz);
   }
 
   const en = group.topEntity.name;
   return { zh, en };
+}
+
+// ----- 兜底标题翻译词典 -----
+const FALLBACK_DICT: [RegExp, string][] = [
+  // 行业
+  [/fashion/gi, '时尚'], [/industry/gi, '行业'], [/market/gi, '市场'],
+  [/brand/gi, '品牌'], [/design(?:er)?/gi, '设计'], [/craft/gi, '工艺'],
+  // 动态
+  [/new|latest|newest/gi, '最新'], [/best|top/gi, '最佳'],
+  [/how to|guide|tips/gi, '指南'], [/review/gi, '评测'],
+  [/report/gi, '报告'], [/analysis/gi, '分析'], [/forecast|predict/gi, '预测'],
+  [/announce/gi, '宣布'], [/confirm/gi, '确认'], [/plan/gi, '计划'],
+  [/return|back/gi, '回归'], [/rise|grow/gi, '崛起'], [/fall|decline|drop/gi, '下滑'],
+  [/change/gi, '变化'], [/transform/gi, '变革'], [/innovati/gi, '创新'],
+  // 产品
+  [/shoe|footwear/gi, '鞋履'], [/cloth|apparel|garment/gi, '服装'],
+  [/dress/gi, '连衣裙'], [/suit/gi, '西装'], [/jacket|coat/gi, '外套'],
+  [/shirt|tee|t-shirt/gi, '上衣'], [/pants|trouser/gi, '裤装'],
+  [/sunglasses/gi, '太阳镜'], [/hat|cap\b/gi, '帽饰'],
+  // 场景
+  [/summer/gi, '夏季'], [/winter/gi, '冬季'], [/spring/gi, '春季'], [/fall|autumn/gi, '秋季'],
+  [/wedding/gi, '婚礼'], [/party|night out/gi, '派对'], [/work|office/gi, '职场'],
+  [/street/gi, '街头'], [/travel/gi, '旅行'], [/beach|vacation/gi, '度假'],
+  // 其他高频
+  [/price|cost/gi, '价格'], [/quality/gi, '品质'], [/color|colour/gi, '色彩'],
+  [/black/gi, '黑色'], [/white/gi, '白色'], [/red\b/gi, '红色'],
+  [/pink/gi, '粉色'], [/gold/gi, '金色'],
+  [/men(?:'s)?/gi, '男装'], [/women(?:'s)?/gi, '女装'], [/kid|child/gi, '童装'],
+  [/global/gi, '全球'], [/china|chinese/gi, '中国'], [/europe/gi, '欧洲'],
+  [/american?/gi, '美国'], [/japan/gi, '日本'], [/korea/gi, '韩国'],
+];
+
+/** 兜底标题：从英文原文提取关键词生成中文短句 */
+function fallbackTitle(text: string, buzz: string): string {
+  // 先尝试用中文标题（如果有）
+  if (/[\u4e00-\u9fff]/.test(text)) {
+    // 已经有中文内容，提取中文部分
+    const zhPart = text.match(/[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]+/g)?.join('') || '';
+    if (zhPart.length >= 4) {
+      return zhPart.length > 30 ? zhPart.substring(0, 30) + '...' : zhPart;
+    }
+  }
+
+  // 从英文中提取可翻译的词
+  const translated: string[] = [];
+  for (const [re, zh] of FALLBACK_DICT) {
+    re.lastIndex = 0;
+    if (re.test(text) && !translated.includes(zh)) {
+      translated.push(zh);
+      if (translated.length >= 4) break;
+    }
+  }
+
+  if (translated.length >= 2) {
+    return `${translated.join('·')} ${buzz}`;
+  }
+
+  if (translated.length === 1) {
+    return `时尚${translated[0]}动态 ${buzz}`;
+  }
+
+  // 终极兜底：保留英文但缩短 + 加中文前缀
+  const raw = text.split(/\s+/).slice(0, 8).join(' ');
+  const short = raw.length > 35 ? raw.substring(0, 35) + '...' : raw;
+  return `时尚热点｜${short}`;
 }
 
 /** Step 8: 生成标签 */
