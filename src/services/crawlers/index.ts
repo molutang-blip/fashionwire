@@ -5,13 +5,14 @@ import { runFusion } from '../fusion';
 
 /** 完整流程：抓取三源 → 融合 → 返回结果 */
 export async function crawlAndFuse() {
-  // Step 1: 并行抓取三个数据源
-  const crawlResults = {
-    google: await crawlGoogleTrends().catch(e => ({ success: false, count: 0, error: e.message })),
-    rss: await crawlFashionMedia().catch(e => ({ success: false, count: 0, error: e.message })),
-    reddit: await crawlReddit().catch(e => ({ success: false, count: 0, error: e.message })),
-  };
+  // Step 1: 并行抓取三个数据源（真正并行，减少总耗时）
+  const [google, rss, reddit] = await Promise.all([
+    crawlGoogleTrends().catch(e => ({ success: false, count: 0, error: e.message })),
+    crawlFashionMedia().catch(e => ({ success: false, count: 0, error: e.message })),
+    crawlReddit().catch(e => ({ success: false, count: 0, error: e.message })),
+  ]);
 
+  const crawlResults = { google, rss, reddit };
   console.log('[Crawl] 抓取结果:', JSON.stringify(crawlResults));
 
   // Step 2: 执行融合
