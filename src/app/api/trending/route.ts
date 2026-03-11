@@ -1,60 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getTrendingTopics, type TrendSource } from '../../../lib/supabase';
+import { getLatestFusedTrends } from '../../../lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const source = searchParams.get('source') as TrendSource | null;
-    const limit = parseInt(searchParams.get('limit') || '20', 10);
-    const offset = parseInt(searchParams.get('offset') || '0', 10);
+    const entityType = searchParams.get('type') || undefined;
+    const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '30', 10), 1), 100);
 
-    if (limit < 1 || limit > 100) {
-      return NextResponse.json(
-        { error: 'limit must be between 1 and 100' },
-        { status: 400 }
-      );
-    }
+    const trends = await getLatestFusedTrends({ limit, entityType });
 
-    if (offset < 0) {
-      return NextResponse.json(
-        { error: 'offset must be non-negative' },
-        { status: 400 }
-      );
-    }
-
-    const topics = await getTrendingTopics({
-      source: source || undefined,
-      limit,
-      offset,
-    });
-
-    const formattedTopics = topics.map((topic) => ({
-      id: topic.id,
-      titleZh: topic.title_zh,
-      titleEn: topic.title_en || '',
-      score: topic.score,
-      sourceLabel: topic.source_label || topic.source,
-      direction: topic.direction,
-      timestamp: topic.created_at,
-      source: topic.source,
-      sourceUrl: topic.source_url,
+    const formatted = trends.map((t) => ({
+      id: t.id,
+      titleZh: t.title_zh,
+      titleEn: t.title_en || '',
+      score: t.score,
+      direction: t.direction,
+      changePercent: t.change_percent,
+      sources: t.sources,
+      sourceLabels: t.source_labels,
+      entities: t.entities,
+      tags: t.tags,
+      topEntity: t.top_entity,
+      entityType: t.entity_type,
+      rawScores: t.raw_scores,
+      timestamp: t.created_at,
     }));
 
     return NextResponse.json({
       success: true,
-      data: formattedTopics,
-      pagination: { limit, offset, total: formattedTopics.length },
+      data: formatted,
+      total: formatted.length,
     });
   } catch (error) {
-    console.error('获取热榜数据失败:', error);
+    console.error('[API] 获取热榜失败:', error);
     return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : '获取数据失败',
-      },
+      { success: false, error: error instanceof Error ? error.message : '获取数据失败' },
       { status: 500 }
     );
   }
 }
 
-export const revalidate = 60;
+export const revalidate = 300; // 5分钟缓存

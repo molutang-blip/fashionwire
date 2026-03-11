@@ -3,54 +3,16 @@ import { insertTrendingTopics, logCrawl, deleteOldTopics, type TrendDirection } 
 const Parser = require('rss-parser');
 const parser = new Parser();
 
-// PRD 实体库
-const BRANDS = ['Chanel', 'Louis Vuitton', 'Gucci', 'Dior', 'Prada', 'Hermès', 'Balenciaga', 'Versace', 'YSL', 'Burberry', 'Celine', 'Valentino', 'Givenchy', 'Fendi', 'Bottega Veneta', 'Nike', 'Adidas', 'Supreme', 'Off-White'];
-const PEOPLE = ['Zendaya', 'Rihanna', 'Beyoncé', 'Kanye', 'Travis Scott', 'Kylie Jenner', 'Kim Kardashian', 'Gigi Hadid', 'Bella Hadid', 'Kendall Jenner', 'Timothée Chalamet', 'Harry Styles'];
-
-// PRD 中文翻译规则
-function generateChineseTitle(title: string): string {
-  let cn = title;
-  const foundBrands: string[] = [];
-  const foundPeople: string[] = [];
-  
-  BRANDS.forEach(b => {
-    if (title.toLowerCase().includes(b.toLowerCase())) {
-      foundBrands.push(b);
-      cn = cn.replace(new RegExp(b, 'gi'), `__BRAND_${foundBrands.length-1}__`);
-    }
-  });
-  
-  PEOPLE.forEach(p => {
-    if (title.toLowerCase().includes(p.toLowerCase())) {
-      foundPeople.push(p);
-      cn = cn.replace(new RegExp(p, 'gi'), `__PEOPLE_${foundPeople.length-1}__`);
-    }
-  });
-  
-  cn = cn
-    .replace(/streetwear/gi, '街头服饰')
-    .replace(/collaboration|collab/gi, '联名合作')
-    .replace(/drop|release/gi, '限量发售')
-    .replace(/collection/gi, '系列发布')
-    .replace(/fashion week/gi, '时装周')
-    .replace(/spring\/summer|ss\d{2}/gi, '春夏系列')
-    .replace(/fall\/winter|fw\d{2}/gi, '秋冬系列')
-    .replace(/lookbook/gi, '造型手册')
-    .replace(/campaign/gi, '广告大片')
-    .replace(/vintage/gi, '复古')
-    .replace(/minimalist/gi, '极简');
-  
-  foundBrands.forEach((b, i) => cn = cn.replace(`__BRAND_${i}__`, b));
-  foundPeople.forEach((p, i) => cn = cn.replace(`__PEOPLE_${i}__`, p));
-  
-  return cn;
-}
-
+// PRD 要求的 8 个 RSS 源 + 权重
 const RSS_FEEDS = [
-  { name: 'WWD', url: 'https://wwd.com/feed/', category: 'business' },
-  { name: 'Hypebeast', url: 'https://hypebeast.com/feed', category: 'streetwear' },
-  { name: 'Vogue Business', url: 'https://www.voguebusiness.com/feed', category: 'business' },
-  { name: 'Business of Fashion', url: 'https://www.businessoffashion.com/feed/', category: 'business' },
+  { name: 'WWD', url: 'https://wwd.com/feed/', weight: 1.2 },
+  { name: 'Business of Fashion', url: 'https://www.businessoffashion.com/feed/', weight: 1.3 },
+  { name: 'Vogue Business', url: 'https://www.voguebusiness.com/feed', weight: 1.2 },
+  { name: 'Hypebeast', url: 'https://hypebeast.com/feed', weight: 0.9 },
+  { name: 'Highsnobiety', url: 'https://www.highsnobiety.com/feed/', weight: 0.9 },
+  { name: 'The Cut', url: 'https://www.thecut.com/feed/rss.xml', weight: 1.0 },
+  { name: 'Fashionista', url: 'https://fashionista.com/.rss/full/', weight: 0.8 },
+  { name: 'Footwear News', url: 'https://footwearnews.com/feed/', weight: 0.9 },
 ];
 
 function getTrendDirection(index: number): TrendDirection {
@@ -68,10 +30,10 @@ async function fetchRssFeed(feed: typeof RSS_FEEDS[0]) {
       pubDate: item.pubDate || item.isoDate || new Date().toISOString(),
       content: item.contentSnippet || item.content || '',
       source: feed.name,
-      category: feed.category,
+      weight: feed.weight,
     }));
   } catch (error) {
-    console.error(`Failed to fetch RSS from ${feed.name}:`, error);
+    console.error(`[RSS] Failed: ${feed.name}`, error);
     return [];
   }
 }
@@ -81,59 +43,46 @@ export async function crawlFashionMedia() {
 
   try {
     console.log('[Fashion Media] Starting RSS fetch...');
-    const allFeeds = await Promise.all(RSS_FEEDS.map(feed => fetchRssFeed(feed)));
+    const allFeeds = await Promise.all(RSS_FEEDS.map(fetchRssFeed));
     const allArticles = allFeeds.flat();
 
-    if (allArticles.length === 0) {
-      throw new Error('No RSS data fetched');
-    }
+    if (allArticles.length === 0) throw new Error('No RSS data fetched');
 
     const sortedArticles = allArticles
-      .sort((a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
-      .slice(0, 15);
+      .sort((a: any, b: any) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
+      .slice(0, 20);
 
-    const topics = sortedArticles.map((item, index) => ({
-      title_zh: generateChineseTitle(item.title), // 中文标题
+    const topics = sortedArticles.map((item: any, index: number) => ({
+      title_zh: item.title,  // 原始标题，中文生成交给融合层
       title_en: item.title,
-      score: Math.round(1000000 - index * 50000),
-      source: 'instagram' as const,
+      score: Math.round(1000 - index * 40),  // 基于时间排序的相对分
+      source: 'rss' as const,                 // ✅ 修正：instagram → rss
       source_label: item.source,
       direction: getTrendDirection(index),
       source_url: item.link,
       source_id: `rss_${item.source}_${Date.now()}_${index}`,
-      raw_data: item,
+      raw_data: { ...item, media_weight: item.weight },  // 存入权重供融合层使用
     }));
 
-    await deleteOldTopics('instagram', 50);
+    await deleteOldTopics('rss', 50);
     await insertTrendingTopics(topics);
 
     const duration = Date.now() - startTime;
     await logCrawl({
-      source: 'instagram',
-      status: 'success',
-      items_count: topics.length,
-      error_message: null,
-      duration_ms: duration,
+      source: 'rss', status: 'success',
+      items_count: topics.length, error_message: null, duration_ms: duration,
     });
 
-    console.log(`[Fashion Media] Fetched ${topics.length} articles`);
+    console.log(`[Fashion Media] Fetched ${topics.length} articles from ${RSS_FEEDS.length} sources`);
     return { success: true, count: topics.length };
   } catch (error) {
     const duration = Date.now() - startTime;
-    const errorMessage = error instanceof Error ? error.message : '未知错误';
-    
-    console.error('[Fashion Media] Error:', errorMessage);
+    const msg = error instanceof Error ? error.message : '未知错误';
+    console.error('[Fashion Media] Error:', msg);
     await logCrawl({
-      source: 'instagram',
-      status: 'failed',
-      items_count: 0,
-      error_message: errorMessage,
-      duration_ms: duration,
+      source: 'rss', status: 'failed',
+      items_count: 0, error_message: msg, duration_ms: duration,
     });
-    return { success: false, count: 0, error: errorMessage };
+    return { success: false, count: 0, error: msg };
   }
-}
-
-export async function crawlFashionMediaMock() {
-  return crawlFashionMedia();
 }
