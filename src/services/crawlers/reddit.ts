@@ -1,14 +1,27 @@
 import { insertTrendingTopics, logCrawl, deleteOldTopics, type TrendDirection } from '@/lib/supabase';
 
+// Reddit 每个 subreddit 都原生提供 RSS feed，无需任何认证
+// 格式：https://www.reddit.com/r/{sub}/hot/.rss
 const SUBREDDITS = [
-  'fashion',
-  'streetwear',
-  'malefashionadvice',
-  'femalefashionadvice',
-  'sneakers',
-  'handbags',
-  'luxuryfashion',
+  { name: 'fashion',              weight: 1.2 },
+  { name: 'streetwear',           weight: 1.1 },
+  { name: 'malefashionadvice',    weight: 1.0 },
+  { name: 'femalefashionadvice',  weight: 1.0 },
+  { name: 'sneakers',             weight: 0.9 },
+  { name: 'handbags',             weight: 0.9 },
+  { name: 'luxuryfashion',        weight: 1.0 },
 ];
+
+const Parser = require('rss-parser');
+// 自定义字段：抓取 Reddit RSS 中的投票数字段
+const parser = new Parser({
+  customFields: {
+    item: [
+      ['media:thumbnail', 'thumbnail'],
+      ['content:encoded', 'contentEncoded'],
+    ],
+  },
+});
 
 function getTrendDirection(index: number): TrendDirection {
   if (index < 3) return 'up';
@@ -16,145 +29,80 @@ function getTrendDirection(index: number): TrendDirection {
   return 'flat';
 }
 
-// -------------------------------------------------------
-// Reddit OAuth2 token（client_credentials，无需用户登录）
-// 环境变量：REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET
-// 若未配置则降级使用公开 .json 接口
-// -------------------------------------------------------
-let cachedToken: { token: string; expiresAt: number } | null = null;
-
-async function getRedditToken(): Promise<string | null> {
-  const clientId = process.env.REDDIT_CLIENT_ID;
-  const clientSecret = process.env.REDDIT_CLIENT_SECRET;
-  if (!clientId || !clientSecret) return null;
-
-  // 复用未过期的 token
-  if (cachedToken && Date.now() < cachedToken.expiresAt - 60_000) {
-    return cachedToken.token;
-  }
-
-  try {
-    const creds = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-    const res = await fetch('https://www.reddit.com/api/v1/access_token', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${creds}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'User-Agent': 'FashionWire/1.0 by FashionWireApp',
-      },
-      body: 'grant_type=client_credentials',
-    });
-    if (!res.ok) {
-      console.warn(`[Reddit] Token 获取失败 ${res.status}`);
-      return null;
-    }
-    const json = await res.json();
-    cachedToken = {
-      token: json.access_token,
-      expiresAt: Date.now() + json.expires_in * 1000,
-    };
-    console.log('[Reddit] OAuth token 获取成功');
-    return cachedToken.token;
-  } catch (e) {
-    console.warn('[Reddit] Token 请求异常', e);
-    return null;
-  }
+/** 从 Reddit RSS item 的正文中提取投票数（格式：&#32; submitted by &#32;...  \n 1234 points...） */
+function extractScore(content: string): number {
+  // Reddit RSS 正文里包含 "1,234 points" 或 "1234 points"
+  const match = content.match(/([\d,]+)\s+point/i);
+  if (match) return parseInt(match[1].replace(/,/g, ''), 10);
+  return 100; // 无法解析时给默认分
 }
 
-async function fetchSubreddit(subreddit: string, token: string | null): Promise<any[]> {
-  // 优先使用 OAuth API，降级使用公开接口
-  const baseUrl = token
-    ? `https://oauth.reddit.com/r/${subreddit}/hot?limit=25`
-    : `https://www.reddit.com/r/${subreddit}/hot.json?limit=25`;
+/** 提取评论数 */
+function extractComments(content: string): number {
+  const match = content.match(/([\d,]+)\s+comment/i);
+  if (match) return parseInt(match[1].replace(/,/g, ''), 10);
+  return 0;
+}
 
-  const headers: Record<string, string> = {
-    'User-Agent': 'FashionWire/1.0 by FashionWireApp',
-    'Accept': 'application/json',
-  };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
+/** 清洗 RSS 正文（去HTML标签，取前300字） */
+function cleanContent(raw: string): string {
+  return raw
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&[a-z]+;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .substring(0, 300);
+}
 
-  // 最多重试2次
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      if (attempt > 0) await new Promise(r => setTimeout(r, attempt * 1500));
+async function fetchSubredditRSS(sub: { name: string; weight: number }): Promise<any[]> {
+  const url = `https://www.reddit.com/r/${sub.name}/hot/.rss?limit=25`;
+  try {
+    const feed = await parser.parseURL(url);
+    return (feed.items || []).map((item: any) => {
+      const rawContent = item.contentEncoded || item.content || item.contentSnippet || '';
+      const ups = extractScore(rawContent);
+      const comments = extractComments(rawContent);
+      const snippet = cleanContent(rawContent);
 
-      const res = await fetch(baseUrl, { headers });
-
-      if (res.status === 429) {
-        console.warn(`[Reddit] r/${subreddit} 被限速(429)，等待后重试`);
-        await new Promise(r => setTimeout(r, 3000));
-        continue;
-      }
-      if (res.status === 403) {
-        console.warn(`[Reddit] r/${subreddit} 拒绝访问(403)，可能需要配置OAuth`);
-        return [];
-      }
-      if (!res.ok) {
-        console.warn(`[Reddit] r/${subreddit} 返回 ${res.status}`);
-        return [];
-      }
-
-      const data = await res.json();
-      return data.data?.children || [];
-    } catch (e) {
-      console.error(`[Reddit] r/${subreddit} 第${attempt + 1}次异常:`, e);
-    }
+      return {
+        title: item.title || '',
+        link: item.link || item.id || '',
+        pubDate: item.pubDate || item.isoDate || new Date().toISOString(),
+        ups,
+        comments,
+        snippet,         // 供融合层生成中文标题用
+        subreddit: sub.name,
+        weight: sub.weight,
+        // 组合分：参考原逻辑 ups + comments×10
+        combinedScore: ups + comments * 10,
+      };
+    });
+  } catch (e) {
+    console.error(`[Reddit RSS] r/${sub.name} 失败:`, e instanceof Error ? e.message : e);
+    return [];
   }
-  return [];
 }
 
 export async function crawlReddit() {
   const startTime = Date.now();
 
   try {
-    console.log('[Reddit] Starting...');
-
-    // 尝试获取 OAuth token（有 token 则绕过反爬）
-    const token = await getRedditToken();
-    if (token) {
-      console.log('[Reddit] 使用 OAuth API');
-    } else {
-      console.log('[Reddit] 未配置 OAuth，使用公开接口（可能受限）');
-    }
-
+    console.log('[Reddit RSS] Starting...');
     const allPosts: any[] = [];
 
-    for (const subreddit of SUBREDDITS) {
-      const posts = await fetchSubreddit(subreddit, token);
-
-      const filtered = posts
-        .filter((p: any) => p.data.ups > 50 && p.data.num_comments > 5)
-        .map((p: any, index: number) => ({
-          title_zh: p.data.title,
-          title_en: p.data.title,
-          score: Math.round(p.data.ups + p.data.num_comments * 10),
-          source: 'reddit' as const,
-          source_label: `r/${subreddit}`,
-          direction: getTrendDirection(index),
-          source_url: `https://reddit.com${p.data.permalink}`,
-          source_id: `reddit_${p.data.id}`,
-          raw_data: {
-            ups: p.data.ups,
-            num_comments: p.data.num_comments,
-            subreddit,
-            created_utc: p.data.created_utc,
-            article_content: (p.data.selftext || '').substring(0, 300),
-            flair: p.data.link_flair_text || '',
-          },
-        }));
-
+    for (const sub of SUBREDDITS) {
+      const posts = await fetchSubredditRSS(sub);
+      // 过滤：ups > 50（RSS解析出来的分数，标准宽松）
+      const filtered = posts.filter(p => p.ups > 50 || p.combinedScore > 100);
       allPosts.push(...filtered);
-      console.log(`[Reddit] r/${subreddit}: ${filtered.length} 条（共 ${posts.length} 原始帖）`);
-
-      // 各 subreddit 之间间隔 500ms，避免触发限速
-      await new Promise(r => setTimeout(r, 500));
+      console.log(`[Reddit RSS] r/${sub.name}: ${filtered.length} 条（共 ${posts.length} 原始）`);
+      // subreddit 之间间隔 600ms，避免被限速
+      await new Promise(r => setTimeout(r, 600));
     }
 
     if (allPosts.length === 0) {
-      const msg = token
-        ? '所有 subreddit 均无符合条件的帖子'
-        : '无法访问 Reddit（未配置 OAuth，公开接口被封）';
-      console.warn(`[Reddit] ${msg}`);
+      const msg = '所有 subreddit RSS 均无数据';
+      console.warn(`[Reddit RSS] ${msg}`);
       await logCrawl({
         source: 'reddit', status: 'failed',
         items_count: 0, error_message: msg, duration_ms: Date.now() - startTime,
@@ -162,124 +110,46 @@ export async function crawlReddit() {
       return { success: false, count: 0, error: msg };
     }
 
-    const topPosts = allPosts.sort((a, b) => b.score - a.score).slice(0, 20);
-
-    await deleteOldTopics('reddit', 60);
-    await insertTrendingTopics(topPosts);
-
-    const duration = Date.now() - startTime;
-    await logCrawl({
-      source: 'reddit', status: 'success',
-      items_count: topPosts.length, duration_ms: duration, error_message: null,
-    });
-
-    console.log(`[Reddit] 写入 ${topPosts.length} 条，耗时 ${duration}ms`);
-    return { success: true, count: topPosts.length };
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : '未知错误';
-    await logCrawl({
-      source: 'reddit', status: 'failed',
-      items_count: 0, error_message: msg, duration_ms: Date.now() - startTime,
-    });
-    return { success: false, count: 0, error: msg };
-  }
-}
-
-
-function getTrendDirection(index: number): TrendDirection {
-  if (index < 3) return 'up';
-  if (index > 7) return 'down';
-  return 'flat';
-}
-
-export async function crawlReddit() {
-  const startTime = Date.now();
-
-  try {
-    console.log('[Reddit] Starting...');
-    const allPosts: any[] = [];
-
-    for (const subreddit of SUBREDDITS) {
-      try {
-        // 增加每个subreddit的抓取量到25条，提高命中率
-        const response = await fetch(
-          `https://www.reddit.com/r/${subreddit}/hot.json?limit=25`,
-          {
-            headers: {
-              'User-Agent': 'FashionWire/1.0 (fashion intelligence platform)',
-              'Accept': 'application/json',
-            },
-          }
-        );
-        if (!response.ok) {
-          console.warn(`[Reddit] r/${subreddit} 返回 ${response.status}`);
-          continue;
-        }
-
-        const data = await response.json();
-        const posts = data.data?.children || [];
-
-        const filtered = posts
-          // 降低过滤阈值：ups>50 && comments>5，大幅扩大可用数据范围
-          // PRD要求的 ups>1000 仅适用于详情页展示，首页抓取需要更宽松
-          .filter((p: any) => p.data.ups > 50 && p.data.num_comments > 5)
-          .map((p: any, index: number) => {
-            // 提取帖子的 selftext（帖子正文）供标题生成使用
-            const selftext = (p.data.selftext || '').substring(0, 300);
-
-            return {
-              title_zh: p.data.title,   // 原始标题，中文生成交给融合层
-              title_en: p.data.title,
-              score: Math.round(p.data.ups + p.data.num_comments * 10),
-              source: 'reddit' as const,
-              source_label: `r/${subreddit}`,
-              direction: getTrendDirection(index),
-              source_url: `https://reddit.com${p.data.permalink}`,
-              source_id: `reddit_${p.data.id}`,
-              raw_data: {
-                ups: p.data.ups,
-                num_comments: p.data.num_comments,
-                subreddit,
-                created_utc: p.data.created_utc,
-                // 保存帖子正文内容，供融合层生成更有意义的中文标题
-                article_content: selftext,
-                // 保存 flair 标签（如 "Discussion", "Outfit", "Review" 等）
-                flair: p.data.link_flair_text || '',
-              },
-            };
-          });
-
-        allPosts.push(...filtered);
-        console.log(`[Reddit] r/${subreddit}: 获取 ${filtered.length} 条帖子`);
-      } catch {
-        console.error(`[Reddit] r/${subreddit} 抓取失败`);
-      }
-    }
-
-    if (allPosts.length === 0) {
-      console.warn('[Reddit] No posts found');
-      return { success: false, count: 0, error: 'No Reddit data' };
-    }
-
-    // 按综合分数排序，取 Top 20（从之前的15增加到20）
+    // 按 combinedScore 排序，取 Top 20
     const topPosts = allPosts
-      .sort((a, b) => b.score - a.score)
+      .sort((a, b) => b.combinedScore - a.combinedScore)
       .slice(0, 20);
 
-    // 保留数量从30增加到60，保留更多历史数据
+    const topics = topPosts.map((item, index) => ({
+      title_zh: item.title,
+      title_en: item.title,
+      score: Math.round(item.combinedScore),
+      source: 'reddit' as const,
+      source_label: `r/${item.subreddit}`,
+      direction: getTrendDirection(index),
+      source_url: item.link,
+      // Reddit RSS 里 link 本身是唯一的帖子 URL，直接用作 source_id
+      source_id: `reddit_rss_${item.link.split('/').filter(Boolean).pop() || index}_${item.subreddit}`,
+      raw_data: {
+        ups: item.ups,
+        num_comments: item.comments,
+        subreddit: item.subreddit,
+        weight: item.weight,
+        // 正文摘要，供融合层生成中文标题
+        article_content: item.snippet,
+        flair: '',
+      },
+    }));
+
     await deleteOldTopics('reddit', 60);
-    await insertTrendingTopics(topPosts);
+    await insertTrendingTopics(topics);
 
     const duration = Date.now() - startTime;
     await logCrawl({
       source: 'reddit', status: 'success',
-      items_count: topPosts.length, duration_ms: duration, error_message: null,
+      items_count: topics.length, duration_ms: duration, error_message: null,
     });
 
-    console.log(`[Reddit] Fetched ${topPosts.length} posts from ${SUBREDDITS.length} subreddits`);
-    return { success: true, count: topPosts.length };
+    console.log(`[Reddit RSS] 写入 ${topics.length} 条，耗时 ${duration}ms`);
+    return { success: true, count: topics.length };
   } catch (err) {
     const msg = err instanceof Error ? err.message : '未知错误';
+    console.error('[Reddit RSS] Error:', msg);
     await logCrawl({
       source: 'reddit', status: 'failed',
       items_count: 0, error_message: msg, duration_ms: Date.now() - startTime,
