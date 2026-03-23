@@ -24,14 +24,27 @@ function getTrendDirection(index: number): TrendDirection {
 async function fetchRssFeed(feed: typeof RSS_FEEDS[0]) {
   try {
     const feedData = await parser.parseURL(feed.url);
-    return feedData.items.slice(0, 5).map((item: any) => ({
-      title: item.title || 'Untitled',
-      link: item.link || '',
-      pubDate: item.pubDate || item.isoDate || new Date().toISOString(),
-      content: item.contentSnippet || item.content || '',
-      source: feed.name,
-      weight: feed.weight,
-    }));
+    return feedData.items.slice(0, 5).map((item: any) => {
+      // 提取最完整的正文内容：优先 content:encoded > content > contentSnippet
+      const fullContent = item['content:encoded'] || item.content || item.contentSnippet || '';
+      // 去除 HTML 标签，保留纯文本（最多 500 字符供标题生成使用）
+      const cleanContent = fullContent
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .substring(0, 500);
+
+      return {
+        title: item.title || 'Untitled',
+        link: item.link || '',
+        pubDate: item.pubDate || item.isoDate || new Date().toISOString(),
+        // contentSnippet 保留原有字段，cleanContent 是清洗后的完整正文
+        content: item.contentSnippet || '',
+        fullContent: cleanContent,
+        source: feed.name,
+        weight: feed.weight,
+      };
+    });
   } catch (error) {
     console.error(`[RSS] Failed: ${feed.name}`, error);
     return [];
@@ -61,7 +74,12 @@ export async function crawlFashionMedia() {
       direction: getTrendDirection(index),
       source_url: item.link,
       source_id: `rss_${item.source}_${Date.now()}_${index}`,
-      raw_data: { ...item, media_weight: item.weight },  // 存入权重供融合层使用
+      raw_data: {
+        ...item,
+        media_weight: item.weight,
+        // 保存清洗后的正文，供融合层生成高质量中文标题使用
+        article_content: item.fullContent || item.content || '',
+      },
     }));
 
     await deleteOldTopics('rss', 50);
