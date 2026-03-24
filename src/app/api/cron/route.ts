@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { crawlAndFuse } from '../../../services/crawlers';
 
-// Vercel Hobby 最大 60 秒
+// Vercel Hobby 最大 60s；用 waitUntil 让响应先返回，后台继续完成全部工作
 export const maxDuration = 60;
 
 function validateCronSecret(request: NextRequest): boolean {
@@ -9,53 +9,59 @@ function validateCronSecret(request: NextRequest): boolean {
   const cronSecret = process.env.CRON_SECRET;
 
   if (!cronSecret) {
-    console.warn('CRON_SECRET not configured - allowing all requests');
+    console.warn('[Cron] CRON_SECRET not configured - allowing all requests');
     return true;
   }
   if (authHeader === `Bearer ${cronSecret}`) return true;
 
   const { searchParams } = new URL(request.url);
+  if (searchParams.get('key') === cronSecret) return true;
   if (searchParams.get('secret') === cronSecret) return true;
 
   return false;
 }
 
-export async function POST(request: NextRequest) {
-  if (!validateCronSecret(request)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
+async function runCrawlFuse(): Promise<{ success: boolean; duration_ms: number; results?: unknown; error?: string }> {
   const startTime = Date.now();
-
   try {
-    console.log('[Cron] 开始执行：抓取 → 融合');
+    console.log('[Cron] start: crawl → fuse');
     const results = await crawlAndFuse();
     const duration = Date.now() - startTime;
-
-    console.log(`[Cron] 完成，耗时 ${duration}ms`);
-
-    return NextResponse.json({
-      success: true,
-      duration_ms: duration,
-      results,
-      timestamp: new Date().toISOString(),
-    });
+    console.log(`[Cron] done in ${duration}ms, fusion:`, JSON.stringify(results.fusion));
+    return { success: true, duration_ms: duration, results };
   } catch (error) {
     const duration = Date.now() - startTime;
-    console.error('[Cron] 失败:', error);
-
-    return NextResponse.json(
-      {
-        success: false,
-        duration_ms: duration,
-        error: error instanceof Error ? error.message : '未知错误',
-        timestamp: new Date().toISOString(),
-      },
-      { status: 500 }
-    );
+    const msg = error instanceof Error ? error.message : 'unknown error';
+    console.error(`[Cron] failed (${duration}ms):`, msg);
+    return { success: false, duration_ms: duration, error: msg };
   }
 }
 
 export async function GET(request: NextRequest) {
-  return POST(request);
+  return handler(request);
+}
+export async function POST(request: NextRequest) {
+  return handler(request);
+}
+
+async function handler(request: NextRequest) {
+  if (!validateCronSecret(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const startTs = new Date().toISOString();
+
+  // waitUntil: 先返回 202，后台继续执行（突破 60s 响应限制）
+  const ctx = (request as unknown as { waitUntil?: (p: Promise<unknown>) => void });
+  if (typeof ctx.waitUntil === 'function') {
+    ctx.waitUntil(runCrawlFuse());
+    return NextResponse.json(
+      { success: true, message: 'accepted, running in background (60-120s)', accepted_at: startTs },
+      { status: 202 }
+    );
+  }
+
+  // 降级：本地 dev 直接等待
+  const result = await runCrawlFuse();
+  return NextResponse.json({ ...result, timestamp: startTs }, { status: result.success ? 200 : 500 });
 }
