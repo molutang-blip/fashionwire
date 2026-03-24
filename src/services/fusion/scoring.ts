@@ -186,7 +186,7 @@ export function mergeIntoGroups(annotated: AnnotatedTopic[]): FusedGroup[] {
   return groups;
 }
 
-/** Step 5: 热度加权计算 (PRD: Google*0.35 + RSS*0.35 + Reddit*0.30) */
+/** Step 5: 热度加权计算 (Reddit 封锁期间: Google*0.40 + RSS*0.60) */
 export function calculateScore(group: FusedGroup, allTopics: DBTrendingTopic[]): {
   score: number;
   rawScores: { google: number; rss: number; reddit: number };
@@ -221,21 +221,24 @@ export function calculateScore(group: FusedGroup, allTopics: DBTrendingTopic[]):
     if (s === 'reddit') redditRaw = Math.max(redditRaw, weighted);
   }
 
-  // PRD 加权
-  const W = { google: 0.35, rss: 0.35, reddit: 0.30 };
-  const activeSources = [
-    googleRaw > 0 ? 'google' : null,
-    rssRaw > 0 ? 'rss' : null,
-    redditRaw > 0 ? 'reddit' : null,
-  ].filter(Boolean) as string[];
+  // 权重从环境变量读取，方便不重部署直接调参
+  // 默认值：Reddit 封锁期间 Google 40% + RSS 60%
+  const wGoogle = parseFloat(process.env.SCORE_WEIGHT_GOOGLE || '0.40');
+  const wRss    = parseFloat(process.env.SCORE_WEIGHT_RSS    || '0.60');
+  const wReddit = parseFloat(process.env.SCORE_WEIGHT_REDDIT || '0.00');
+  const BASE_W = { google: wGoogle, rss: wRss, reddit: wReddit };
 
-  // 如果某源缺失，按比例重分权重
-  let totalW = activeSources.reduce((sum, s) => sum + (W as any)[s], 0);
-  if (totalW === 0) totalW = 1;
+  let weightedSum = 0;
+  let activeWeightTotal = 0;
 
-  const score = Math.round(
-    (googleRaw * W.google + rssRaw * W.rss + redditRaw * W.reddit) / totalW
-  );
+  if (googleRaw > 0) { weightedSum += googleRaw * BASE_W.google; activeWeightTotal += BASE_W.google; }
+  if (rssRaw > 0)    { weightedSum += rssRaw * BASE_W.rss;       activeWeightTotal += BASE_W.rss; }
+  if (redditRaw > 0) { weightedSum += redditRaw * BASE_W.reddit; activeWeightTotal += BASE_W.reddit; }
+
+  // 如果没有任何数据源有分，退回到平均值 0
+  const score = activeWeightTotal > 0
+    ? Math.round(weightedSum / activeWeightTotal)
+    : 0;
 
   return {
     score: Math.min(100, Math.max(0, score)),
@@ -328,7 +331,45 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
   }
 
   // =====================================================
-  // 情绪词 / 行动词（按语义场景精准选择）
+  // 从正文提取关键短语（替代无意义的兜底 buzz 词）
+  // =====================================================
+  function extractKeyPhrase(): string {
+    // 优先从正文第一句话提取有意义的中文短语
+    const sentences = allBodyText.split(/[.!?]/);
+    for (const s of sentences) {
+      const trimmed = s.trim();
+      if (trimmed.length < 15 || trimmed.length > 120) continue;
+      let translated = trimmed;
+      for (const [re, zh_] of TERM_MAP) {
+        re.lastIndex = 0;
+        translated = translated.replace(re, zh_);
+      }
+      const zhChunks = translated.match(/[\u4e00-\u9fff]{3,}/g);
+      if (zhChunks && zhChunks.join('').length >= 4) {
+        return zhChunks.slice(0, 2).join('').substring(0, 14);
+      }
+    }
+    // 退而求其次：用标题术语翻译
+    let translatedTitle = allTitles;
+    for (const [re, zh_] of TERM_MAP) {
+      re.lastIndex = 0;
+      translatedTitle = translatedTitle.replace(re, zh_);
+    }
+    const zhParts = translatedTitle.match(/[\u4e00-\u9fff]{2,}/g);
+    if (zhParts && zhParts.join('').length >= 4) {
+      return zhParts.slice(0, 2).join('').substring(0, 14);
+    }
+    return '';
+  }
+
+  const keyPhrase = extractKeyPhrase();
+
+  // 提取颁奖典礼名
+  const awardMatch2 = allText.match(/\b(Met Gala|Oscar|Grammy|Cannes|Golden Globe|BAFTA|Emmy|CFDA)\b/i);
+  const awardName = awardMatch2 ? awardMatch2[1] : '';
+
+  // =====================================================
+  // 情绪词 / 行动词（按语义场景精准选择，兜底用正文短语）
   // =====================================================
   let buzz = '';
   if (isControversyContent) {
@@ -350,9 +391,10 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
   } else if (isTrendContent) {
     buzz = ['持续引爆时尚圈', '成为本周最热话题', '席卷全网'][Math.floor(Math.random() * 3)];
   } else if (isRedcarpetContent) {
-    buzz = ['红毯造型成焦点', '惊艳四座', '成为当晚最佳穿搭'][Math.floor(Math.random() * 3)];
+    buzz = awardName ? `${awardName}造型成焦点` : '红毯造型成焦点';
   } else {
-    buzz = ['成为时尚圈焦点', '引发行业热议', '备受关注'][Math.floor(Math.random() * 3)];
+    // 兜底：用从正文提取的关键短语，没有则留空（避免"备受关注"类废话）
+    buzz = keyPhrase;
   }
 
   // =====================================================
@@ -463,7 +505,9 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
   }
   // T14: 人物+品牌（通用关联）
   else if (firstPerson && firstBrand) {
-    const connector = isLaunchContent ? '携手发布' : isCollabContent ? '联名出击' : '强强联合';
+    const connector = isLaunchContent ? '携手发布新品' : isCollabContent ? '联名系列正式发布' :
+      isAmbassadorContent ? '官宣代言合作' :
+      keyPhrase ? keyPhrase : '最新动态曝光';
     zh = `${firstPerson} × ${firstBrand} ${connector}`;
   }
   // T15: 仅品牌+事件词（用匹配到的最准确事件词）
@@ -479,16 +523,27 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
         break;
       }
     }
-    zh = bestTerm
-      ? `${firstBrand} ${bestTerm}${buzz}`
-      : `${firstBrand}：${buzz}`;
+    if (bestTerm) {
+      zh = keyPhrase
+        ? `${firstBrand} ${bestTerm}：${keyPhrase}`
+        : `${firstBrand} ${bestTerm}${buzz}`;
+    } else if (keyPhrase) {
+      zh = `${firstBrand}：${keyPhrase}`;
+    } else {
+      // 没有正文短语时，直接用英文原标题核心词翻译
+      zh = buildFallbackFromContent(allTitles, allBodyText, firstBrand);
+    }
   }
   // T16: 仅人物
   else if (firstPerson) {
-    const termForPerson = ['红毯', '大秀', '造型', '穿搭', '联名'].find(t => allText.includes(t)) || '';
+    const termForPerson = isRunwayContent ? '大秀造型' :
+      isRedcarpetContent ? (awardName ? `${awardName}红毯` : '红毯造型') :
+      isCelebrityStyleContent ? '最新穿搭' :
+      isAmbassadorContent ? '品牌代言' :
+      keyPhrase || '';
     zh = termForPerson
-      ? `${firstPerson} ${termForPerson}${buzz}`
-      : `${firstPerson}${buzz}`;
+      ? `${firstPerson} ${termForPerson}`
+      : buildFallbackFromContent(allTitles, allBodyText, firstPerson);
   }
   // T17: 仅事件
   else if (firstEvent) {
@@ -496,7 +551,7 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
   }
   // T18: 终极兜底 — 从正文句子提炼
   else {
-    zh = buildFallbackFromContent(allTitles, allBodyText, buzz);
+    zh = buildFallbackFromContent(allTitles, allBodyText);
   }
 
   // 标题长度控制（不超过32字符）
@@ -510,61 +565,72 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
 
 /**
  * 终极兜底：从英文标题/正文提炼有意义的中文短句
- * 优先直接翻译原标题的核心部分，而非拼凑术语
+ * entityHint: 已知的实体名（品牌/人名），优先放在标题开头
  */
-function buildFallbackFromContent(titles: string, body: string, buzz: string): string {
-  // 策略1：尝试直接从英文标题提取品牌名 + 关键动词
-  const titleWords = titles.split(/[\s\-–—:,|]+/).filter(w => w.length > 2);
-
-  // 找到大写单词（可能是品牌/人名）
-  const capitalWords = titleWords.filter(w => /^[A-Z][a-z]/.test(w) && w.length > 3);
-
-  // 策略2：用 TERM_MAP 翻译标题中的关键词
+function buildFallbackFromContent(titles: string, body: string, entityHint: string = ''): string {
+  // 策略1：尝试翻译英文标题中的核心动词短语（最直接）
   let translatedTitle = titles;
   for (const [re, zh] of TERM_MAP) {
     re.lastIndex = 0;
     translatedTitle = translatedTitle.replace(re, zh);
   }
 
-  // 如果翻译后包含足够中文字符，截取使用
-  const zhChars = translatedTitle.match(/[\u4e00-\u9fff]/g);
-  if (zhChars && zhChars.length >= 4) {
-    // 提取中文词片段
-    const zhSegments = translatedTitle.match(/[\u4e00-\u9fff\w\s]{3,20}/g) || [];
-    const meaningful = zhSegments.filter(s => /[\u4e00-\u9fff]{2,}/.test(s));
-    if (meaningful.length > 0) {
-      const joined = meaningful.slice(0, 2).join('·').replace(/\s+/g, '');
-      return joined.length >= 4 ? `${joined}${buzz}` : `时尚热点｜${joined}`;
-    }
+  // 提取翻译后的中文词片段（至少2个汉字连续）
+  const zhChunks = translatedTitle.match(/[\u4e00-\u9fff]{2,}/g) || [];
+  const meaningfulChunks = zhChunks.filter(c =>
+    // 过滤掉单独出现的连接词
+    !['和', '与', '的', '在', '是', '了', '将', '于'].includes(c)
+  );
+
+  if (meaningfulChunks.length >= 2) {
+    const core = meaningfulChunks.slice(0, 3).join('·').substring(0, 20);
+    return entityHint ? `${entityHint}：${core}` : core;
+  }
+  if (meaningfulChunks.length === 1 && meaningfulChunks[0].length >= 4) {
+    return entityHint
+      ? `${entityHint} ${meaningfulChunks[0]}`
+      : `时尚｜${meaningfulChunks[0]}`;
   }
 
-  // 策略3：保留重要的英文词 + 中文说明
-  if (capitalWords.length >= 1) {
-    const keyWord = capitalWords[0];
-    // 检查是否为知名品牌/人名（首字母大写且长度合理）
-    return `${keyWord}：${buzz}`;
-  }
-
-  // 策略4：从正文中找最短的完整语义句
-  const shortSentence = body.split(/[.!?]/)
-    .map(s => s.trim())
-    .filter(s => s.length > 20 && s.length < 80 && /[A-Za-z]{3,}/.test(s))
-    .sort((a, b) => a.length - b.length)[0];
-
-  if (shortSentence) {
-    // 翻译这个短句的关键部分
-    let translated = shortSentence;
+  // 策略2：从正文第一句话翻译
+  const firstSentence = body.split(/[.!?]/)[0]?.trim() || '';
+  if (firstSentence.length > 10 && firstSentence.length < 120) {
+    let translated = firstSentence;
     for (const [re, zh] of TERM_MAP) {
       re.lastIndex = 0;
       translated = translated.replace(re, zh);
     }
-    const zhPart = translated.match(/[\u4e00-\u9fff]{2,}/g)?.join('') || '';
-    if (zhPart.length >= 4) return `${zhPart}${buzz}`;
+    const parts = translated.match(/[\u4e00-\u9fff]{2,}/g);
+    if (parts && parts.join('').length >= 6) {
+      const summary = parts.slice(0, 3).join('').substring(0, 16);
+      return entityHint ? `${entityHint}：${summary}` : summary;
+    }
   }
 
-  // 最终兜底：提取标题前几个英文词
-  const shortTitle = titles.split(/\s+/).slice(0, 6).join(' ');
-  return `时尚热点｜${shortTitle.substring(0, 30)}`;
+  // 策略3：找正文中的大写专有名词 + 中文术语组合
+  const capitalWords = titles.split(/[\s\-–—:,|]+/)
+    .filter(w => /^[A-Z][a-z]{2,}/.test(w) && w.length >= 4 && w !== entityHint);
+  if (capitalWords.length > 0 && entityHint) {
+    // 用 TERM_MAP 翻译这些词
+    for (const w of capitalWords.slice(0, 2)) {
+      let wTranslated = w;
+      for (const [re, zh] of TERM_MAP) {
+        re.lastIndex = 0;
+        wTranslated = wTranslated.replace(re, zh);
+      }
+      const zhMatch = wTranslated.match(/[\u4e00-\u9fff]{2,}/);
+      if (zhMatch) {
+        return `${entityHint} ${zhMatch[0]}`;
+      }
+    }
+    return `${entityHint} × ${capitalWords[0]}`;
+  }
+
+  // 策略4：截取英文标题前7个词 + 实体提示
+  const shortTitle = titles.split(/\s+/).slice(0, 7).join(' ').substring(0, 40);
+  return entityHint
+    ? `${entityHint}｜${shortTitle}`
+    : `时尚热点｜${shortTitle.substring(0, 28)}`;
 }
 
 

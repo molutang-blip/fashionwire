@@ -21,9 +21,8 @@ const SUBREDDITS = [
   { name: 'handbags',           weight: 0.9 },
 ];
 
-function getTrendDirection(index: number): TrendDirection {
-  if (index < 3) return 'up';
-  if (index > 7) return 'down';
+// 爬虫层方向仅作初始占位，真实方向由融合层基于历史分数计算
+function getTrendDirection(_index: number): TrendDirection {
   return 'flat';
 }
 

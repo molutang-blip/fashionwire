@@ -10,23 +10,54 @@ import { extractEntities } from '../fusion/entities';
 // -------------------------------------------------------
 
 const FASHION_KEYWORDS = [
+  // ── 顶级奢侈品牌 ──
   'Chanel', 'Louis Vuitton', 'Gucci', 'Dior', 'Prada',
-  'Hermes', 'Balenciaga', 'Versace', 'Burberry', 'Zendaya',
-  'Met Gala', 'Paris Fashion Week', 'Milan Fashion Week',
-  'Taylor Swift fashion', 'streetwear trend',
+  'Hermes', 'Balenciaga', 'Versace', 'Burberry', 'Celine',
+  'Valentino', 'Fendi', 'Bottega Veneta', 'Loewe', 'Miu Miu',
+  'Maison Margiela', 'Jacquemus', 'The Row', 'Loro Piana',
+  // ── 时装周 & 重大活动 ──
+  'Paris Fashion Week', 'Milan Fashion Week', 'New York Fashion Week',
+  'London Fashion Week', 'Met Gala', 'Haute Couture Week',
+  // ── 明星 & KOL ──
+  'Zendaya fashion', 'Taylor Swift fashion', 'Rihanna style',
+  'Beyonce outfit', 'Timothee Chalamet style', 'Kendall Jenner',
+  'Hailey Bieber', 'Dua Lipa fashion', 'Billie Eilish style',
+  // ── 潮流 & 运动 ──
+  'streetwear trend', 'Nike collab', 'Adidas fashion',
+  'sneaker release 2026', 'Supreme drop', 'Off White',
+  // ── 细分赛道 ──
+  'luxury fashion trend', 'sustainable fashion', 'quiet luxury',
+  'old money aesthetic', 'fashion week review', 'runway collection',
+  // ── 联名 & 新品 ──
+  'fashion collaboration 2026', 'designer collab', 'limited edition fashion',
+  // ── 中国市场热词（补充亚洲视角）──
+  'Chinese fashion', 'K-fashion trend', 'Asian luxury market',
 ];
 
 // 时尚相关过滤词（用于 dailyTrends 结果筛选）
 const FASHION_FILTER_KEYWORDS = [
+  // 品牌
   'chanel','louis vuitton','gucci','dior','prada','hermes','balenciaga',
   'versace','burberry','ysl','celine','valentino','givenchy','fendi',
   'bottega','loewe','miu miu','off-white','supreme','nike','adidas',
-  'zara','uniqlo','h&m','shein','zendaya','rihanna','beyonce',
+  'zara','uniqlo','h&m','shein','jacquemus','the row','maison margiela',
+  'loro piana','acne studios','isabel marant','thom browne','rick owens',
+  'balmain','moncler','max mara','vivienne westwood','stella mccartney',
+  'alexander mcqueen','tom ford','ralph lauren','calvin klein','coach',
+  // 人物
+  'zendaya','rihanna','beyonce','kanye','travis scott',
   'taylor swift','kim kardashian','kylie jenner','kendall jenner',
   'gigi hadid','bella hadid','timothee chalamet','harry styles',
-  'lady gaga','billie eilish','fashion week','met gala','coachella',
+  'lady gaga','billie eilish','hailey bieber','dua lipa','bad bunny',
+  'pharrell','virgil abloh','anna wintour','demna',
+  // 活动
+  'fashion week','met gala','coachella','oscars','grammy','cannes',
+  'haute couture','cfda','british fashion awards',
+  // 趋势词
   'vogue','runway','collection','couture','streetwear','sneaker',
-  'outfit','style','fashion','luxury','designer',
+  'outfit','style','fashion','luxury','designer','collab','collaboration',
+  'drop','limited edition','capsule','resort collection',
+  'quiet luxury','old money','sustainable fashion','upcycled',
 ];
 
 function isFashionRelated(text: string): boolean {
@@ -34,9 +65,8 @@ function isFashionRelated(text: string): boolean {
   return FASHION_FILTER_KEYWORDS.some(k => lower.includes(k));
 }
 
-function getTrendDirection(index: number): TrendDirection {
-  if (index < 3) return 'up';
-  if (index > 7) return 'down';
+// 爬虫层方向仅作初始占位，真实方向由融合层基于历史分数计算
+function getTrendDirection(_index: number): TrendDirection {
   return 'flat';
 }
 

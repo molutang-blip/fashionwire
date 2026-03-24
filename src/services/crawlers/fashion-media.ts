@@ -3,8 +3,9 @@ import { insertTrendingTopics, logCrawl, deleteOldTopics, type TrendDirection } 
 const Parser = require('rss-parser');
 const parser = new Parser();
 
-// PRD 要求的 8 个 RSS 源 + 权重
+// PRD 要求的 8 个 RSS 源 + Reddit 封锁期间扩展至 14 个，权重补充
 const RSS_FEEDS = [
+  // ── 原有 8 个核心媒体 ──
   { name: 'WWD', url: 'https://wwd.com/feed/', weight: 1.2 },
   { name: 'Business of Fashion', url: 'https://www.businessoffashion.com/feed/', weight: 1.3 },
   { name: 'Vogue Business', url: 'https://www.voguebusiness.com/feed', weight: 1.2 },
@@ -13,18 +14,24 @@ const RSS_FEEDS = [
   { name: 'The Cut', url: 'https://www.thecut.com/feed/rss.xml', weight: 1.0 },
   { name: 'Fashionista', url: 'https://fashionista.com/.rss/full/', weight: 0.8 },
   { name: 'Footwear News', url: 'https://footwearnews.com/feed/', weight: 0.9 },
+  // ── Reddit 封锁期间新增 6 个（覆盖更多视角）──
+  { name: 'Harper\'s Bazaar', url: 'https://www.harpersbazaar.com/rss/all.xml/', weight: 1.1 },
+  { name: 'Elle', url: 'https://www.elle.com/rss/all.xml/', weight: 1.0 },
+  { name: 'GQ', url: 'https://www.gq.com/feed/rss', weight: 1.0 },
+  { name: 'Vogue', url: 'https://www.vogue.com/feed/rss', weight: 1.2 },
+  { name: 'CR Fashion Book', url: 'https://www.crfashionbook.com/feed/', weight: 0.8 },
+  { name: 'Complex Style', url: 'https://www.complex.com/style/rss', weight: 0.9 },
 ];
 
-function getTrendDirection(index: number): TrendDirection {
-  if (index < 3) return 'up';
-  if (index > 7) return 'down';
+// 爬虫层方向仅作初始占位，真实方向由融合层基于历史分数计算
+function getTrendDirection(_index: number): TrendDirection {
   return 'flat';
 }
 
 async function fetchRssFeed(feed: typeof RSS_FEEDS[0]) {
   try {
     const feedData = await parser.parseURL(feed.url);
-    return feedData.items.slice(0, 5).map((item: any) => {
+    return feedData.items.slice(0, 8).map((item: any) => {
       // 提取最完整的正文内容：优先 content:encoded > content > contentSnippet
       const fullContent = item['content:encoded'] || item.content || item.contentSnippet || '';
       // 去除 HTML 标签，保留纯文本（最多 500 字符供标题生成使用）
@@ -63,7 +70,7 @@ export async function crawlFashionMedia() {
 
     const sortedArticles = allArticles
       .sort((a: any, b: any) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime())
-      .slice(0, 20);
+      .slice(0, 30);
 
     const topics = sortedArticles.map((item: any, index: number) => ({
       title_zh: item.title,  // 原始标题，中文生成交给融合层
