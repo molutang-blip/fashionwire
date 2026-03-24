@@ -112,10 +112,15 @@ export interface FusedGroup {
 
 /** Step 1: 给每条数据标注实体 */
 export function annotateTopics(topics: DBTrendingTopic[]): AnnotatedTopic[] {
-  return topics.map(t => ({
-    topic: t,
-    entities: extractEntities([t.title_en, t.title_zh].filter(Boolean).join(' ')),
-  }));
+  return topics.map(t => {
+    // 同时扫描标题 + 正文内容，提高实体命中率
+    const articleContent = (t.raw_data as any)?.article_content || '';
+    const fullText = [t.title_en, t.title_zh, articleContent].filter(Boolean).join(' ');
+    return {
+      topic: t,
+      entities: extractEntities(fullText),
+    };
+  });
 }
 
 /** Step 2: 词重叠相似度 (简化版 Jaccard) */
@@ -545,11 +550,11 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
       ? `${firstPerson} ${termForPerson}`
       : buildFallbackFromContent(allTitles, allBodyText, firstPerson);
   }
-  // T17: 仅事件
-  else if (firstEvent) {
+  // T17: 仅事件（有具体事件名才用，否则直接走 T18）
+  else if (firstEvent && buzz && buzz !== keyPhrase) {
     zh = `${firstEvent}：${buzz}`;
   }
-  // T18: 终极兜底 — 从正文句子提炼
+  // T18: 终极兜底 — 保留英文原标题，避免垃圾拼接
   else {
     zh = buildFallbackFromContent(allTitles, allBodyText);
   }
@@ -564,73 +569,74 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
 }
 
 /**
- * 终极兜底：从英文标题/正文提炼有意义的中文短句
- * entityHint: 已知的实体名（品牌/人名），优先放在标题开头
+ * 终极兜底：无实体时从英文原标题提炼有意义的中文标题
+ * 核心原则：保留英文原标题信息，不做垃圾拼接
  */
 function buildFallbackFromContent(titles: string, body: string, entityHint: string = ''): string {
-  // 策略1：尝试翻译英文标题中的核心动词短语（最直接）
-  let translatedTitle = titles;
+  // 从所有标题中取最短/最有代表性的一条（通常是 RSS 文章标题）
+  const titleList = titles.split(/\s{2,}/).map(t => t.trim()).filter(t => t.length > 5);
+  const bestTitle = titleList.sort((a, b) => a.length - b.length)[0] || titles.trim();
+
+  // 策略1：标题中存在已知品牌/人名（TERM_MAP 翻译后仍是英文的实体）
+  // 直接用"[中文品类词] | [英文原标题片段]"格式
+  if (entityHint) {
+    // entityHint 已知，找标题中除 entityHint 外最有信息量的词组（2-4个词）
+    const wordsAfterEntity = bestTitle
+      .replace(new RegExp(entityHint, 'gi'), '')
+      .split(/[\s:,\-–—|]+/)
+      .filter(w => w.length > 2)
+      .slice(0, 4)
+      .join(' ')
+      .trim();
+
+    if (wordsAfterEntity.length > 3) {
+      // 翻译这部分词
+      let translated = wordsAfterEntity;
+      for (const [re, zh] of TERM_MAP) {
+        re.lastIndex = 0;
+        translated = translated.replace(re, zh);
+      }
+      const zhParts = translated.match(/[\u4e00-\u9fff]{2,}/g);
+      if (zhParts && zhParts.join('').length >= 4) {
+        return `${entityHint} ${zhParts.slice(0, 2).join('')}`.substring(0, 30);
+      }
+      // 中文翻译不够，保留英文补充
+      return `${entityHint}｜${wordsAfterEntity.substring(0, 20)}`;
+    }
+    return `${entityHint}｜${bestTitle.substring(0, 22)}`;
+  }
+
+  // 策略2：无实体提示，先翻译整个标题看有没有有意义的中文词组
+  let translatedTitle = bestTitle;
   for (const [re, zh] of TERM_MAP) {
     re.lastIndex = 0;
     translatedTitle = translatedTitle.replace(re, zh);
   }
+  const zhChunks = (translatedTitle.match(/[\u4e00-\u9fff]{2,}/g) || [])
+    .filter(c => c.length >= 2 && !['的', '和', '与', '在', '是', '了', '将', '于'].includes(c));
 
-  // 提取翻译后的中文词片段（至少2个汉字连续）
-  const zhChunks = translatedTitle.match(/[\u4e00-\u9fff]{2,}/g) || [];
-  const meaningfulChunks = zhChunks.filter(c =>
-    // 过滤掉单独出现的连接词
-    !['和', '与', '的', '在', '是', '了', '将', '于'].includes(c)
-  );
-
-  if (meaningfulChunks.length >= 2) {
-    const core = meaningfulChunks.slice(0, 3).join('·').substring(0, 20);
-    return entityHint ? `${entityHint}：${core}` : core;
-  }
-  if (meaningfulChunks.length === 1 && meaningfulChunks[0].length >= 4) {
-    return entityHint
-      ? `${entityHint} ${meaningfulChunks[0]}`
-      : `时尚｜${meaningfulChunks[0]}`;
+  // 必须至少有2个有意义的中文词组，且总长度 >= 6 字才采用，避免"揭晓·腕表"这种碎片
+  if (zhChunks.length >= 2 && zhChunks.join('').length >= 6) {
+    // 找标题中残留的大写英文词（品牌/人名）作为前缀
+    const capWords = bestTitle.match(/\b[A-Z][A-Za-z]{2,}\b/g)
+      ?.filter(w => !['The', 'And', 'For', 'With', 'This', 'That', 'From'].includes(w)) || [];
+    const prefix = capWords.slice(0, 2).join(' ');
+    const zhCore = zhChunks.slice(0, 2).join('');
+    return prefix
+      ? `${prefix} ${zhCore}`.substring(0, 30)
+      : zhCore.substring(0, 28);
   }
 
-  // 策略2：从正文第一句话翻译
-  const firstSentence = body.split(/[.!?]/)[0]?.trim() || '';
-  if (firstSentence.length > 10 && firstSentence.length < 120) {
-    let translated = firstSentence;
-    for (const [re, zh] of TERM_MAP) {
-      re.lastIndex = 0;
-      translated = translated.replace(re, zh);
-    }
-    const parts = translated.match(/[\u4e00-\u9fff]{2,}/g);
-    if (parts && parts.join('').length >= 6) {
-      const summary = parts.slice(0, 3).join('').substring(0, 16);
-      return entityHint ? `${entityHint}：${summary}` : summary;
-    }
-  }
+  // 策略3：中文翻译词太少，直接用英文原标题（最诚实的做法）
+  // 截取最有信息量的前 6 个词（跳过冠词/介词）
+  const stopWords = new Set(['a', 'an', 'the', 'of', 'in', 'on', 'at', 'to', 'for', 'by', 'is', 'are', 'was', 'as']);
+  const meaningfulWords = bestTitle
+    .split(/[\s:,\-–—|]+/)
+    .filter(w => w.length > 1 && !stopWords.has(w.toLowerCase()))
+    .slice(0, 6)
+    .join(' ');
 
-  // 策略3：找正文中的大写专有名词 + 中文术语组合
-  const capitalWords = titles.split(/[\s\-–—:,|]+/)
-    .filter(w => /^[A-Z][a-z]{2,}/.test(w) && w.length >= 4 && w !== entityHint);
-  if (capitalWords.length > 0 && entityHint) {
-    // 用 TERM_MAP 翻译这些词
-    for (const w of capitalWords.slice(0, 2)) {
-      let wTranslated = w;
-      for (const [re, zh] of TERM_MAP) {
-        re.lastIndex = 0;
-        wTranslated = wTranslated.replace(re, zh);
-      }
-      const zhMatch = wTranslated.match(/[\u4e00-\u9fff]{2,}/);
-      if (zhMatch) {
-        return `${entityHint} ${zhMatch[0]}`;
-      }
-    }
-    return `${entityHint} × ${capitalWords[0]}`;
-  }
-
-  // 策略4：截取英文标题前7个词 + 实体提示
-  const shortTitle = titles.split(/\s+/).slice(0, 7).join(' ').substring(0, 40);
-  return entityHint
-    ? `${entityHint}｜${shortTitle}`
-    : `时尚热点｜${shortTitle.substring(0, 28)}`;
+  return `时尚｜${meaningfulWords.substring(0, 26)}`;
 }
 
 
