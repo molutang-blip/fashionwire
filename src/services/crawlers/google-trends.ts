@@ -264,3 +264,4 @@ export async function crawlGoogleTrends() {
     return { success: false, count: 0, error: msg };
   }
 }
+// force-redeploy-2026-03-24
