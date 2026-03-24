@@ -261,166 +261,245 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
   const firstPerson = people[0] || '';
   const firstEvent = events[0] || '';
 
+  // =====================================================
   // 收集所有文本：标题 + 正文内容（raw_data.article_content）
-  const allTitleText = group.topics.map(t =>
+  // =====================================================
+  const allTitles = group.topics.map(t =>
     [t.topic.title_en || '', t.topic.title_zh || ''].join(' ')
   ).join(' ');
 
-  // 提取每条原始数据的正文内容（RSS的article_content）
-  const allBodyText = group.topics
+  // 提取每条原始数据的正文内容（RSS的article_content / Google snippet / Reddit snippet）
+  const bodyParts = group.topics
     .map(t => (t.topic.raw_data as any)?.article_content || '')
-    .filter(Boolean)
-    .join(' ');
+    .filter(Boolean);
 
-  const allText = [allTitleText, allBodyText].join(' ');
-
-  // --- 收集所有匹配到的中文术语 ---
-  const matchedTerms: string[] = [];
-  for (const [re, zh] of TERM_MAP) {
-    re.lastIndex = 0;
-    if (re.test(allText) && !matchedTerms.includes(zh)) {
-      matchedTerms.push(zh);
-      if (matchedTerms.length >= 4) break;
-    }
-  }
-  const eventZh = matchedTerms[0] || '';
-
-  // --- 从正文提取数字/业绩类信息（增加标题信息量）---
-  const percentMatch = allBodyText.match(/(\d+(?:\.\d+)?)\s*%/);
-  const percentStr = percentMatch ? `${percentMatch[1]}%` : '';
-
-  const salesMatch = allBodyText.match(/\$[\d,.]+ (?:billion|million)/i);
-  const salesStr = salesMatch
-    ? salesMatch[0].replace('billion', '亿').replace('million', '百万')
-    : '';
-
-  // --- 检测语义场景（用于选择更精准的标题模板）---
-  const isCollabContent =
-    /collabo|collab|partner|team(?:ing)? up|joint|联名|合作/i.test(allText);
-  const isFinancialContent =
-    /revenue|sales|profit|earnings|quarterly|annual|业绩|财报|营收|下滑|增长/i.test(allText);
-  const isLaunchContent =
-    /launch|release|drop|unveil|debut|introduce|发布|发售|首发|亮相/i.test(allText);
-  const isRunwayContent =
-    /runway|show|collection|catwalk|走秀|大秀|系列/i.test(allText);
-  const isControversyContent =
-    /controversy|scandal|backlash|criticis|dispute|争议|丑闻|抵制/i.test(allText);
-  const isBuyContent =
-    /sold out|waitlist|buy|purchase|restock|售罄|补货|抢购/i.test(allText);
-  const isAmbassadorContent =
-    /ambassador|spokesperson|endorse|代言|品牌大使/i.test(allText);
-  const isPriceContent =
-    /price|cost|expensive|afford|cheap|定价|涨价|降价|溢价/i.test(allText);
-  const isTrendContent =
-    /trend|trendin|viral|popular|热门|爆款|流行/i.test(allText);
-  const isRedcarpetContent =
-    /red carpet|award|gala|oscars|grammy|cannes|红毯|颁奖|典礼/i.test(allText);
-
-  // 情绪词（按场景选择）
-  const buzzwords: string[] = [];
-  if (isControversyContent) buzzwords.push('引发争议', '陷入风波', '掀起讨论');
-  else if (isBuyContent) buzzwords.push('火速售罄', '引发抢购热潮', '一件难求');
-  else if (isFinancialContent) buzzwords.push('最新业绩曝光', '财报引关注', '市场表现亮眼');
-  else if (isLaunchContent) buzzwords.push('正式发布', '全球首发', '重磅上线');
-  else if (isRunwayContent) buzzwords.push('惊艳亮相', '引领风潮', '成为焦点');
-  else if (isAmbassadorContent) buzzwords.push('官宣代言', '品牌大使确认', '强强联合');
-  else buzzwords.push('引发关注', '引发热议', '备受瞩目', '成为焦点', '持续升温');
-
-  const buzz = buzzwords[Math.floor(Math.random() * buzzwords.length)];
+  const allBodyText = bodyParts.join(' ');
+  const allText = [allTitles, allBodyText].join(' ');
 
   // =====================================================
-  // 标题模板选择（优先级从高到低，语义化）
+  // 从正文提取具体信息（增加标题信息量）
+  // =====================================================
+  // 百分比（业绩变化）
+  const percentMatch = allBodyText.match(/(\-?\d+(?:\.\d+)?)\s*(?:percent|%)/i)
+    || allTitles.match(/(\-?\d+(?:\.\d+)?)\s*(?:percent|%)/i);
+  const percentStr = percentMatch ? `${percentMatch[1]}%` : '';
+
+  // 金额（销售额/融资额）
+  const moneyMatch = allText.match(/\$([\d,.]+)\s*(billion|million|trillion)/i);
+  const moneyStr = moneyMatch
+    ? `$${moneyMatch[1]}${moneyMatch[2] === 'billion' ? '亿' : moneyMatch[2] === 'trillion' ? '万亿' : '百万'}`
+    : '';
+
+  // 季节词
+  const seasonStr = /spring|summer|ss\d{2}/i.test(allText) ? '春夏' :
+    /fall|winter|fw\d{2}|autumn/i.test(allText) ? '秋冬' :
+    /resort|cruise/i.test(allText) ? '度假' :
+    /pre.?fall/i.test(allText) ? '早秋' : '';
+
+  // =====================================================
+  // 语义场景检测（用于选择精准标题模板）
+  // =====================================================
+  const isCollabContent = /collabo|collab\b|partner(?:ship)?|team(?:ing)?\s*up|joint\s*(?:venture|collection)|×|联名|合作/i.test(allText);
+  const isFinancialContent = /revenue|sales\s*(?:rose|fell|grew|declined|up|down)|profit|earnings|quarterly|annual report|fiscal|净利|营收|业绩|财报|下滑|增长|亏损/i.test(allText);
+  const isLaunchContent = /(?:officially\s*)?launch(?:es|ed)?|new\s+(?:collection|product|line|shoe|bag)|unveil|debut|introduces?|release[sd]?|drops?\b|发布|发售|首发|亮相|上市/i.test(allText);
+  const isRunwayContent = /runway\s*show|(?:spring|fall|haute)\s*(?:couture|collection)|fashion\s*week\s*show|catwalk|走秀|大秀|发布秀/i.test(allText);
+  const isControversyContent = /controversy|controversial|scandal|backlash|criticis(?:m|ed)|accusation|dispute|ban|protest|boycott|争议|丑闻|抵制|风波|指控/i.test(allText);
+  const isBuyContent = /sold\s*out|waitlist|resell|resale|restock|limited(?:\s*edition)?|instant\s*sellout|售罄|补货|抢购|限量|秒售空/i.test(allText);
+  const isAmbassadorContent = /brand\s*ambassador|global\s*ambassador|spokesperson|endorsement|officially\s*named|代言|品牌大使|官宣/i.test(allText);
+  const isPriceContent = /price\s*(?:increase|hike|raise|cut)|cost\s*(?:rise|drop)|tariff|afford|expensive|overpriced|涨价|降价|定价|关税/i.test(allText);
+  const isTrendContent = /(?:trend(?:ing)?|viral|going\s*viral|takes?\s*over|dominate[sd]?|surge[sd]?)\b/i.test(allText);
+  const isRedcarpetContent = /red\s*carpet|(?:oscar|grammy|met\s*gala|cannes|golden\s*globe|bafta|emmy)[s\s]/i.test(allText);
+  const isLeadershipContent = /(?:new\s*)?(?:CEO|creative\s*director|chief|appoint(?:ed|s)?|named\s*(?:as|new)|(?:steps?\s*(?:down|aside))|(?:exit|depart|resign|leave))\b/i.test(allText);
+  const isStoreContent = /(?:new\s*)?(?:flagship|store|boutique|(?:open(?:ing|s|ed)?)|(?:pop.?up)|(?:retail\s*(?:expansion|location)))/i.test(allText);
+  const isCelebrityStyleContent = /(?:wears?|spotted\s*in|dressed\s*in|outfitted\s*in|styled\s*by|street\s*style|airport\s*(?:look|style|fashion))\b/i.test(allText);
+
+  // =====================================================
+  // 从正文中提取核心动作短语（增加标题可读性）
+  // =====================================================
+  function extractCoreAction(): string {
+    // 尝试从英文正文提取最有信息量的短句（名词+动词组合）
+    const sentenceMatches = allBodyText.match(/[A-Z][^.!?]*(?:launch|release|partner|collab|appoint|name|open|close|debut|announce|unveil|sign|sold|surge|rise|fall|drop|expand|acquire)[^.!?]*[.!?]/gi);
+    if (sentenceMatches && sentenceMatches.length > 0) {
+      // 取最短的一句（最精炼）
+      const shortest = sentenceMatches.sort((a, b) => a.length - b.length)[0];
+      return shortest.substring(0, 120);
+    }
+    return '';
+  }
+
+  // =====================================================
+  // 情绪词 / 行动词（按语义场景精准选择）
+  // =====================================================
+  let buzz = '';
+  if (isControversyContent) {
+    buzz = ['引发争议', '陷入风波', '掀起轩然大波', '遭遇强烈批评'][Math.floor(Math.random() * 4)];
+  } else if (isBuyContent) {
+    buzz = ['火速售罄', '引发抢购', '一件难求', '限量秒空'][Math.floor(Math.random() * 4)];
+  } else if (isFinancialContent) {
+    buzz = percentStr.startsWith('-') ? '业绩下滑引关注' : '业绩亮眼';
+  } else if (isLaunchContent) {
+    buzz = ['正式发布', '重磅登场', '全球首发', '惊喜亮相'][Math.floor(Math.random() * 4)];
+  } else if (isRunwayContent) {
+    buzz = ['大秀震撼呈现', '秀场惊艳全场', '引领本季风潮'][Math.floor(Math.random() * 3)];
+  } else if (isAmbassadorContent) {
+    buzz = ['官宣代言', '正式成为品牌大使', '强势出击'][Math.floor(Math.random() * 3)];
+  } else if (isPriceContent) {
+    buzz = ['价格调整引热议', '涨价消息曝光', '定价策略成焦点'][Math.floor(Math.random() * 3)];
+  } else if (isLeadershipContent) {
+    buzz = ['人事变动引关注', '管理层迎来变化'][Math.floor(Math.random() * 2)];
+  } else if (isTrendContent) {
+    buzz = ['持续引爆时尚圈', '成为本周最热话题', '席卷全网'][Math.floor(Math.random() * 3)];
+  } else if (isRedcarpetContent) {
+    buzz = ['红毯造型成焦点', '惊艳四座', '成为当晚最佳穿搭'][Math.floor(Math.random() * 3)];
+  } else {
+    buzz = ['成为时尚圈焦点', '引发行业热议', '备受关注'][Math.floor(Math.random() * 3)];
+  }
+
+  // =====================================================
+  // 标题模板选择（18级优先级，语义精准化）
   // =====================================================
   let zh = '';
 
-  // T1: 财务/业绩类（包含数字更有价值）
+  // T1: 财务/业绩类（数字最有信息量，优先级最高）
   if (isFinancialContent && firstBrand) {
     if (percentStr) {
-      zh = `${firstBrand} 业绩${percentStr.startsWith('-') ? '下滑' : '增长'} ${percentStr}，${buzz}`;
-    } else if (salesStr) {
-      zh = `${firstBrand} ${salesStr} 营收数据引关注`;
+      const dir = parseFloat(percentStr) < 0 ? '下滑' : '增长';
+      zh = `${firstBrand} 季度业绩${dir} ${percentStr}`;
+    } else if (moneyStr) {
+      zh = `${firstBrand} 营收达 ${moneyStr}，${buzz}`;
     } else {
-      zh = `${firstBrand} 最新业绩曝光，${buzz}`;
+      // 尝试从正文提取更多细节
+      const revenueDetail = allBodyText.match(/(?:revenue|sales|profit)\s+(?:rose|fell|grew|declined|increased|decreased)\s+(?:by\s+)?(\d+(?:\.\d+)?%?)/i);
+      if (revenueDetail) {
+        zh = `${firstBrand} 最新财报：${revenueDetail[0].substring(0, 40)}`;
+        zh = `${firstBrand} 最新业绩曝光，${buzz}`;
+      } else {
+        zh = `${firstBrand} 最新业绩曝光，${buzz}`;
+      }
     }
   }
-  // T2: 争议/危机类（最高关注度）
-  else if (isControversyContent && firstBrand) {
-    zh = `${firstBrand} ${eventZh || '品牌'}${buzz}`;
+  // T2: 争议/危机类（吸引点击最强）
+  else if (isControversyContent) {
+    if (firstBrand && firstPerson) {
+      zh = `${firstPerson} 与 ${firstBrand} ${buzz}`;
+    } else if (firstBrand) {
+      const topic = isAmbassadorContent ? '代言争议' : isPriceContent ? '定价风波' : '品牌事件';
+      zh = `${firstBrand} ${topic}${buzz}`;
+    } else if (firstPerson) {
+      zh = `${firstPerson} ${buzz}`;
+    } else {
+      zh = `时尚圈${buzz}`;
+    }
   }
-  // T3: 代言类
+  // T3: 人事/高管变动类
+  else if (isLeadershipContent && firstBrand) {
+    const roleMatch = allText.match(/(?:CEO|creative\s*director|chief\s*\w+|president|chairman)/i);
+    const role = roleMatch ? roleMatch[0] : '高管';
+    zh = firstPerson
+      ? `${firstBrand} ${role} ${firstPerson}${buzz}`
+      : `${firstBrand} ${role}${buzz}`;
+  }
+  // T4: 代言类
   else if (isAmbassadorContent && firstPerson && firstBrand) {
-    zh = `${firstPerson} 出任 ${firstBrand} 品牌大使，${buzz}`;
+    zh = `${firstPerson} × ${firstBrand}：${buzz}`;
+  } else if (isAmbassadorContent && firstBrand) {
+    zh = `${firstBrand} 全新品牌大使${buzz}`;
   }
-  // T4: 联名类
+  // T5: 联名合作类（品牌×品牌 or 人物×品牌）
   else if (isCollabContent && firstBrand && firstPerson) {
-    zh = `${firstPerson} × ${firstBrand} 联名单品${buzz}`;
+    zh = `${firstPerson} × ${firstBrand} 联名系列${buzz}`;
   } else if (isCollabContent && brands.length >= 2) {
     zh = `${brands[0]} × ${brands[1]} 联名${buzz}`;
+  } else if (isCollabContent && firstBrand) {
+    zh = `${firstBrand} 全新联名${buzz}`;
   }
-  // T5: 红毯/颁奖类（人物+事件）
+  // T6: 红毯/颁奖典礼类
   else if (isRedcarpetContent && firstPerson) {
-    const eventName = firstEvent || '颁奖典礼';
-    zh = `${firstPerson} 亮相${eventName}，${buzz}`;
+    const eventName = firstEvent || (allText.match(/(?:Oscar|Grammy|Met Gala|Cannes|Golden Globe)[s\s]*/i)?.[0]?.trim()) || '颁奖典礼';
+    zh = `${firstPerson} ${eventName}${buzz}`;
   }
-  // T6: 发售/发布类
+  // T7: 名人穿搭/街拍类
+  else if (isCelebrityStyleContent && firstPerson && firstBrand) {
+    zh = `${firstPerson} 上身 ${firstBrand}，${buzz}`;
+  } else if (isCelebrityStyleContent && firstPerson) {
+    zh = `${firstPerson} 最新穿搭${buzz}`;
+  }
+  // T8: 新品发售/发布类（带季节词更具体）
   else if (isLaunchContent && firstBrand) {
-    zh = `${firstBrand} ${eventZh || '新品'}正式发布，${buzz}`;
+    if (seasonStr) {
+      zh = `${firstBrand} ${seasonStr}新品${buzz}`;
+    } else {
+      const productType = /shoe|sneaker|footwear/i.test(allText) ? '新款球鞋' :
+        /bag|handbag/i.test(allText) ? '新款手袋' :
+        /fragrance|perfume/i.test(allText) ? '全新香水' :
+        /jewelry|jewellery/i.test(allText) ? '珠宝新作' : '新品';
+      zh = `${firstBrand} ${productType}${buzz}`;
+    }
   }
-  // T7: 秀场/系列类
+  // T9: 秀场/系列类
   else if (isRunwayContent && firstBrand) {
-    const season = /spring|summer|ss/i.test(allText) ? '春夏' : /fall|winter|fw/i.test(allText) ? '秋冬' : '';
-    zh = `${firstBrand} ${season}${eventZh || '新系列'}${buzz}`;
+    const season = seasonStr || '';
+    zh = `${firstBrand} ${season}${firstEvent || '大秀'}${buzz}`;
   }
-  // T8: 球鞋/潮品抢购
+  // T10: 价格/关税类
+  else if (isPriceContent && firstBrand) {
+    zh = `${firstBrand} ${buzz}`;
+  }
+  // T11: 售罄/抢购类
   else if (isBuyContent && firstBrand) {
-    zh = `${firstBrand} 新品${buzz}`;
+    zh = `${firstBrand} 限量新品${buzz}`;
   }
-  // T9: 趋势类
+  // T12: 门店开业/扩张类
+  else if (isStoreContent && firstBrand) {
+    const cityMatch = allText.match(/(?:in|at|opens?)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/);
+    const city = cityMatch ? cityMatch[1] : '';
+    zh = city
+      ? `${firstBrand} ${city}旗舰店${buzz}`
+      : `${firstBrand} 门店扩张${buzz}`;
+  }
+  // T13: 趋势/热度类
   else if (isTrendContent && firstBrand) {
-    zh = `${firstBrand} ${eventZh || '话题'}持续升温，${buzz}`;
+    zh = `${firstBrand} ${seasonStr ? seasonStr + '趋势' : '话题'}${buzz}`;
   }
-  // T10: 人物+品牌（通用）
-  else if (firstPerson && firstBrand && eventZh) {
-    zh = `${firstPerson} 身着 ${firstBrand} ${eventZh}${buzz}`;
-  } else if (firstPerson && firstBrand) {
-    zh = `${firstPerson} 携手 ${firstBrand}，${buzz}`;
+  // T14: 人物+品牌（通用关联）
+  else if (firstPerson && firstBrand) {
+    const connector = isLaunchContent ? '携手发布' : isCollabContent ? '联名出击' : '强强联合';
+    zh = `${firstPerson} × ${firstBrand} ${connector}`;
   }
-  // T11: 仅品牌+事件类型
-  else if (firstBrand && eventZh) {
-    zh = `${firstBrand} ${eventZh}${buzz}`;
-  }
-  // T12: 仅人物+事件
-  else if (firstPerson && firstEvent) {
-    zh = `${firstPerson} ${firstEvent}${buzz}`;
-  }
-  // T13: 多品牌对比
-  else if (brands.length >= 2) {
-    zh = `${brands[0]} vs ${brands[1]}：本周谁更受时尚圈关注`;
-  }
-  // T14: 仅品牌
+  // T15: 仅品牌+事件词（用匹配到的最准确事件词）
   else if (firstBrand) {
-    zh = `${firstBrand} ${eventZh || matchedTerms[0] || '最新动态'}${buzz}`;
+    // 优先选择最具体的术语（避免"动态"、"趋势"这种模糊词）
+    const specificTerms = ['春夏系列', '秋冬系列', '高级定制', '联名合作', '新品发售',
+      '广告大片', '系列发布', '球鞋', '手袋', '配饰', '香水', '珠宝', '度假系列'];
+    let bestTerm = '';
+    for (const [re, zh_] of TERM_MAP) {
+      re.lastIndex = 0;
+      if (re.test(allText) && specificTerms.includes(zh_)) {
+        bestTerm = zh_;
+        break;
+      }
+    }
+    zh = bestTerm
+      ? `${firstBrand} ${bestTerm}${buzz}`
+      : `${firstBrand}：${buzz}`;
   }
-  // T15: 仅人物
+  // T16: 仅人物
   else if (firstPerson) {
-    zh = `${firstPerson} ${eventZh || matchedTerms[0] || '时尚动态'}${buzz}`;
+    const termForPerson = ['红毯', '大秀', '造型', '穿搭', '联名'].find(t => allText.includes(t)) || '';
+    zh = termForPerson
+      ? `${firstPerson} ${termForPerson}${buzz}`
+      : `${firstPerson}${buzz}`;
   }
-  // T16: 仅事件
+  // T17: 仅事件
   else if (firstEvent) {
-    zh = `${firstEvent} ${buzz}`;
+    zh = `${firstEvent}：${buzz}`;
   }
-  // T17: 有术语匹配
-  else if (matchedTerms.length >= 2) {
-    zh = `${matchedTerms[0]}｜${matchedTerms[1]} ${buzz}`;
-  } else if (matchedTerms.length === 1) {
-    zh = `时尚${matchedTerms[0]} ${buzz}`;
-  }
-  // T18: 终极兜底 — 直接用正文提炼
+  // T18: 终极兜底 — 从正文句子提炼
   else {
-    zh = fallbackTitle(allText, buzz);
+    zh = buildFallbackFromContent(allTitles, allBodyText, buzz);
   }
 
-  // 标题长度控制（不超过30字符）
+  // 标题长度控制（不超过32字符）
   if (zh.length > 32) {
     zh = zh.substring(0, 30) + '…';
   }
@@ -429,70 +508,65 @@ export function generateTitle(group: FusedGroup): { zh: string; en: string } {
   return { zh, en };
 }
 
-// ----- 兜底标题翻译词典 -----
-const FALLBACK_DICT: [RegExp, string][] = [
-  // 行业
-  [/fashion/gi, '时尚'], [/industry/gi, '行业'], [/market/gi, '市场'],
-  [/brand/gi, '品牌'], [/design(?:er)?/gi, '设计'], [/craft/gi, '工艺'],
-  // 动态
-  [/new|latest|newest/gi, '最新'], [/best|top/gi, '最佳'],
-  [/how to|guide|tips/gi, '指南'], [/review/gi, '评测'],
-  [/report/gi, '报告'], [/analysis/gi, '分析'], [/forecast|predict/gi, '预测'],
-  [/announce/gi, '宣布'], [/confirm/gi, '确认'], [/plan/gi, '计划'],
-  [/return|back/gi, '回归'], [/rise|grow/gi, '崛起'], [/fall|decline|drop/gi, '下滑'],
-  [/change/gi, '变化'], [/transform/gi, '变革'], [/innovati/gi, '创新'],
-  // 产品
-  [/shoe|footwear/gi, '鞋履'], [/cloth|apparel|garment/gi, '服装'],
-  [/dress/gi, '连衣裙'], [/suit/gi, '西装'], [/jacket|coat/gi, '外套'],
-  [/shirt|tee|t-shirt/gi, '上衣'], [/pants|trouser/gi, '裤装'],
-  [/sunglasses/gi, '太阳镜'], [/hat|cap\b/gi, '帽饰'],
-  // 场景
-  [/summer/gi, '夏季'], [/winter/gi, '冬季'], [/spring/gi, '春季'], [/fall|autumn/gi, '秋季'],
-  [/wedding/gi, '婚礼'], [/party|night out/gi, '派对'], [/work|office/gi, '职场'],
-  [/street/gi, '街头'], [/travel/gi, '旅行'], [/beach|vacation/gi, '度假'],
-  // 其他高频
-  [/price|cost/gi, '价格'], [/quality/gi, '品质'], [/color|colour/gi, '色彩'],
-  [/black/gi, '黑色'], [/white/gi, '白色'], [/red\b/gi, '红色'],
-  [/pink/gi, '粉色'], [/gold/gi, '金色'],
-  [/men(?:'s)?/gi, '男装'], [/women(?:'s)?/gi, '女装'], [/kid|child/gi, '童装'],
-  [/global/gi, '全球'], [/china|chinese/gi, '中国'], [/europe/gi, '欧洲'],
-  [/american?/gi, '美国'], [/japan/gi, '日本'], [/korea/gi, '韩国'],
-];
+/**
+ * 终极兜底：从英文标题/正文提炼有意义的中文短句
+ * 优先直接翻译原标题的核心部分，而非拼凑术语
+ */
+function buildFallbackFromContent(titles: string, body: string, buzz: string): string {
+  // 策略1：尝试直接从英文标题提取品牌名 + 关键动词
+  const titleWords = titles.split(/[\s\-–—:,|]+/).filter(w => w.length > 2);
 
-/** 兜底标题：从英文原文提取关键词生成中文短句 */
-function fallbackTitle(text: string, buzz: string): string {
-  // 先尝试用中文标题（如果有）
-  if (/[\u4e00-\u9fff]/.test(text)) {
-    // 已经有中文内容，提取中文部分
-    const zhPart = text.match(/[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]+/g)?.join('') || '';
-    if (zhPart.length >= 4) {
-      return zhPart.length > 30 ? zhPart.substring(0, 30) + '...' : zhPart;
-    }
-  }
+  // 找到大写单词（可能是品牌/人名）
+  const capitalWords = titleWords.filter(w => /^[A-Z][a-z]/.test(w) && w.length > 3);
 
-  // 从英文中提取可翻译的词
-  const translated: string[] = [];
-  for (const [re, zh] of FALLBACK_DICT) {
+  // 策略2：用 TERM_MAP 翻译标题中的关键词
+  let translatedTitle = titles;
+  for (const [re, zh] of TERM_MAP) {
     re.lastIndex = 0;
-    if (re.test(text) && !translated.includes(zh)) {
-      translated.push(zh);
-      if (translated.length >= 4) break;
+    translatedTitle = translatedTitle.replace(re, zh);
+  }
+
+  // 如果翻译后包含足够中文字符，截取使用
+  const zhChars = translatedTitle.match(/[\u4e00-\u9fff]/g);
+  if (zhChars && zhChars.length >= 4) {
+    // 提取中文词片段
+    const zhSegments = translatedTitle.match(/[\u4e00-\u9fff\w\s]{3,20}/g) || [];
+    const meaningful = zhSegments.filter(s => /[\u4e00-\u9fff]{2,}/.test(s));
+    if (meaningful.length > 0) {
+      const joined = meaningful.slice(0, 2).join('·').replace(/\s+/g, '');
+      return joined.length >= 4 ? `${joined}${buzz}` : `时尚热点｜${joined}`;
     }
   }
 
-  if (translated.length >= 2) {
-    return `${translated.join('·')} ${buzz}`;
+  // 策略3：保留重要的英文词 + 中文说明
+  if (capitalWords.length >= 1) {
+    const keyWord = capitalWords[0];
+    // 检查是否为知名品牌/人名（首字母大写且长度合理）
+    return `${keyWord}：${buzz}`;
   }
 
-  if (translated.length === 1) {
-    return `时尚${translated[0]}动态 ${buzz}`;
+  // 策略4：从正文中找最短的完整语义句
+  const shortSentence = body.split(/[.!?]/)
+    .map(s => s.trim())
+    .filter(s => s.length > 20 && s.length < 80 && /[A-Za-z]{3,}/.test(s))
+    .sort((a, b) => a.length - b.length)[0];
+
+  if (shortSentence) {
+    // 翻译这个短句的关键部分
+    let translated = shortSentence;
+    for (const [re, zh] of TERM_MAP) {
+      re.lastIndex = 0;
+      translated = translated.replace(re, zh);
+    }
+    const zhPart = translated.match(/[\u4e00-\u9fff]{2,}/g)?.join('') || '';
+    if (zhPart.length >= 4) return `${zhPart}${buzz}`;
   }
 
-  // 终极兜底：保留英文但缩短 + 加中文前缀
-  const raw = text.split(/\s+/).slice(0, 8).join(' ');
-  const short = raw.length > 35 ? raw.substring(0, 35) + '...' : raw;
-  return `时尚热点｜${short}`;
+  // 最终兜底：提取标题前几个英文词
+  const shortTitle = titles.split(/\s+/).slice(0, 6).join(' ');
+  return `时尚热点｜${shortTitle.substring(0, 30)}`;
 }
+
 
 /** Step 8: 生成标签 */
 export function generateTags(group: FusedGroup): string[] {

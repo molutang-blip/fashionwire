@@ -4,19 +4,10 @@ import { insertTrendingTopics, logCrawl, deleteOldTopics, type TrendDirection } 
 // Reddit 数据源 - 多策略并行，绕过IP封锁
 //
 // 策略优先级：
-// 1. RSS Feed（r/{sub}/hot/.rss）        ← 最稳定，用现有rss-parser
-// 2. Search API（/search.json?q=fashion）← 走不同CDN，封锁率低
-// 3. Pushshift API（第三方存档）          ← 无需认证，备用
+// 1. RSS Feed（r/{sub}/hot/.rss）           ← 最稳定，用现有rss-parser
+// 2. JSON API（old.reddit.com/.json）       ← 子域名，封锁率更低
+// 3. Pushshift API（第三方存档）             ← 无需认证，备用
 // -------------------------------------------------------
-
-const FASHION_SEARCH_QUERIES = [
-  'fashion brand new collection',
-  'luxury fashion week',
-  'sneaker release drop',
-  'streetwear outfit',
-  'designer collab collaboration',
-  'fashion trend 2025',
-];
 
 const SUBREDDITS = [
   { name: 'fashion',             weight: 1.2 },
@@ -104,49 +95,56 @@ async function fetchViaRSS(): Promise<any[]> {
 }
 
 // -------------------------------------------------------
-// 策略2: Reddit Search API（/search.json，不同CDN路径）
-// 对时尚关键词做搜索，取 top/week 排序
+// 策略2: Reddit JSON API（不同CDN，.json后缀方式，更稳定）
+// 直接抓取子版块热帖，绕过封锁
 // -------------------------------------------------------
 async function fetchViaSearch(): Promise<any[]> {
   const posts: any[] = [];
+
+  // 用 old.reddit.com 和 .json 后缀，不同于主域名，封锁率更低
+  const endpoints = [
+    { url: 'https://old.reddit.com/r/fashion/top.json?t=week&limit=25', sub: 'fashion', weight: 1.2 },
+    { url: 'https://old.reddit.com/r/streetwear/top.json?t=week&limit=15', sub: 'streetwear', weight: 1.1 },
+    { url: 'https://old.reddit.com/r/malefashionadvice/top.json?t=week&limit=10', sub: 'malefashionadvice', weight: 1.0 },
+    { url: 'https://old.reddit.com/r/femalefashionadvice/top.json?t=week&limit=10', sub: 'femalefashionadvice', weight: 1.0 },
+    { url: 'https://old.reddit.com/r/sneakers/top.json?t=week&limit=10', sub: 'sneakers', weight: 0.9 },
+  ];
+
   const headers = {
-    'User-Agent': 'FashionWire/1.0 (fashion intelligence; contact: fashionwire@example.com)',
+    'User-Agent': 'Mozilla/5.0 (compatible; FashionWire/1.0; +https://fashionwire.app)',
     'Accept': 'application/json',
   };
 
-  for (const query of FASHION_SEARCH_QUERIES.slice(0, 4)) { // 控制请求数
+  for (const ep of endpoints) {
     try {
-      const url = `https://www.reddit.com/search.json?q=${encodeURIComponent(query)}&sort=top&t=week&limit=10&restrict_sr=false`;
-      const res = await fetch(url, { headers });
-
+      const res = await fetch(ep.url, { headers });
       if (!res.ok) {
-        console.warn(`[Reddit/Search] "${query}" 返回 ${res.status}`);
-        await new Promise(r => setTimeout(r, 1000));
+        console.warn(`[Reddit/JSON] r/${ep.sub} 返回 ${res.status}`);
+        await new Promise(r => setTimeout(r, 600));
         continue;
       }
 
       const data = await res.json();
-      const children = data.data?.children || [];
+      const children = data?.data?.children || [];
 
       const items = children
-        .filter((p: any) => p.data.subreddit_name_prefixed?.match(/fashion|streetwear|style|sneaker|handbag|luxury/i))
         .map((p: any) => ({
           title: p.data.title || '',
           link: `https://reddit.com${p.data.permalink}`,
           ups: p.data.ups || 0,
           comments: p.data.num_comments || 0,
-          snippet: (p.data.selftext || '').substring(0, 300),
-          subreddit: p.data.subreddit,
-          weight: 1.0,
+          snippet: (p.data.selftext || p.data.url || '').substring(0, 300),
+          subreddit: ep.sub,
+          weight: ep.weight,
           combinedScore: (p.data.ups || 0) + (p.data.num_comments || 0) * 10,
         }))
-        .filter((p: any) => p.ups > 30);
+        .filter((p: any) => p.ups > 20 || p.comments > 10);
 
       posts.push(...items);
-      console.log(`[Reddit/Search] "${query}": ${items.length} 条时尚帖`);
-      await new Promise(r => setTimeout(r, 800));
+      console.log(`[Reddit/JSON] r/${ep.sub}: ${items.length} 条`);
+      await new Promise(r => setTimeout(r, 500));
     } catch (e) {
-      console.warn(`[Reddit/Search] "${query}" 异常:`, e instanceof Error ? e.message : e);
+      console.warn(`[Reddit/JSON] r/${ep.sub} 异常:`, e instanceof Error ? e.message : e);
     }
   }
 
@@ -197,7 +195,7 @@ export async function crawlReddit() {
       fetchViaSearch().catch(() => []),
     ]);
 
-    console.log(`[Reddit] RSS: ${rssResults.length}, Search: ${searchResults.length}`);
+    console.log(`[Reddit] RSS: ${rssResults.length}, JSON-API: ${searchResults.length}`);
 
     // 合并去重（以 link 为唯一键）
     const seen = new Set<string>();
