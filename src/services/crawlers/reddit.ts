@@ -9,14 +9,11 @@ import { insertTrendingTopics, logCrawl, deleteOldTopics, type TrendDirection } 
 // 3. Pushshift API（第三方存档）             ← 无需认证，备用
 // -------------------------------------------------------
 
+// 精简为3个核心子版块（控制总请求时间在15s内）
 const SUBREDDITS = [
-  { name: 'fashion',             weight: 1.2 },
-  { name: 'streetwear',          weight: 1.1 },
-  { name: 'malefashionadvice',   weight: 1.0 },
-  { name: 'femalefashionadvice', weight: 1.0 },
-  { name: 'sneakers',            weight: 0.9 },
-  { name: 'handbags',            weight: 0.9 },
-  { name: 'luxuryfashion',       weight: 1.0 },
+  { name: 'fashion',    weight: 1.2 },
+  { name: 'streetwear', weight: 1.1 },
+  { name: 'sneakers',   weight: 0.9 },
 ];
 
 const Parser = require('rss-parser');
@@ -58,16 +55,24 @@ function cleanContent(raw: string): string {
 
 // -------------------------------------------------------
 // 策略1: RSS Feed（rss-parser，已有依赖，最轻量）
+// 每个子版块设置 8 秒超时，防止单个阻塞整体
 // -------------------------------------------------------
 async function fetchViaRSS(): Promise<any[]> {
   const posts: any[] = [];
 
   for (const sub of SUBREDDITS) {
     try {
-      const url = `https://www.reddit.com/r/${sub.name}/hot/.rss?limit=25`;
-      const feed = await parser.parseURL(url);
+      const url = `https://www.reddit.com/r/${sub.name}/hot/.rss?limit=20`;
 
-      const items = (feed.items || []).map((item: any) => {
+      // 带超时的 Promise 竞争，防止单个 RSS 请求卡住
+      const feed = await Promise.race([
+        parser.parseURL(url),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('RSS timeout')), 8000)
+        ),
+      ]);
+
+      const items = ((feed as any).items || []).map((item: any) => {
         const raw = item.contentEncoded || item.content || item.contentSnippet || '';
         const ups = extractScore(raw);
         const comments = extractComments(raw);
@@ -81,11 +86,11 @@ async function fetchViaRSS(): Promise<any[]> {
           weight: sub.weight,
           combinedScore: ups + comments * 10,
         };
-      }).filter((p: any) => p.ups > 30 || p.combinedScore > 80);
+      }).filter((p: any) => p.ups > 10 || p.combinedScore > 50);
 
       posts.push(...items);
       console.log(`[Reddit/RSS] r/${sub.name}: ${items.length} 条`);
-      await new Promise(r => setTimeout(r, 400));
+      await new Promise(r => setTimeout(r, 300));
     } catch (e) {
       console.warn(`[Reddit/RSS] r/${sub.name} 失败:`, e instanceof Error ? e.message : e);
     }
@@ -95,18 +100,15 @@ async function fetchViaRSS(): Promise<any[]> {
 }
 
 // -------------------------------------------------------
-// 策略2: Reddit JSON API（不同CDN，.json后缀方式，更稳定）
-// 直接抓取子版块热帖，绕过封锁
+// 策略2: Reddit JSON API（old.reddit.com，封锁率更低）
+// 精简为3个子版块，每个 8 秒超时
 // -------------------------------------------------------
 async function fetchViaSearch(): Promise<any[]> {
   const posts: any[] = [];
 
-  // 用 old.reddit.com 和 .json 后缀，不同于主域名，封锁率更低
   const endpoints = [
-    { url: 'https://old.reddit.com/r/fashion/top.json?t=week&limit=25', sub: 'fashion', weight: 1.2 },
+    { url: 'https://old.reddit.com/r/fashion/top.json?t=week&limit=20', sub: 'fashion', weight: 1.2 },
     { url: 'https://old.reddit.com/r/streetwear/top.json?t=week&limit=15', sub: 'streetwear', weight: 1.1 },
-    { url: 'https://old.reddit.com/r/malefashionadvice/top.json?t=week&limit=10', sub: 'malefashionadvice', weight: 1.0 },
-    { url: 'https://old.reddit.com/r/femalefashionadvice/top.json?t=week&limit=10', sub: 'femalefashionadvice', weight: 1.0 },
     { url: 'https://old.reddit.com/r/sneakers/top.json?t=week&limit=10', sub: 'sneakers', weight: 0.9 },
   ];
 
@@ -117,10 +119,14 @@ async function fetchViaSearch(): Promise<any[]> {
 
   for (const ep of endpoints) {
     try {
-      const res = await fetch(ep.url, { headers });
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 8000);
+
+      const res = await fetch(ep.url, { headers, signal: controller.signal });
+      clearTimeout(timer);
+
       if (!res.ok) {
         console.warn(`[Reddit/JSON] r/${ep.sub} 返回 ${res.status}`);
-        await new Promise(r => setTimeout(r, 600));
         continue;
       }
 
@@ -138,11 +144,11 @@ async function fetchViaSearch(): Promise<any[]> {
           weight: ep.weight,
           combinedScore: (p.data.ups || 0) + (p.data.num_comments || 0) * 10,
         }))
-        .filter((p: any) => p.ups > 20 || p.comments > 10);
+        .filter((p: any) => p.ups > 10 || p.comments > 5);
 
       posts.push(...items);
       console.log(`[Reddit/JSON] r/${ep.sub}: ${items.length} 条`);
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise(r => setTimeout(r, 300));
     } catch (e) {
       console.warn(`[Reddit/JSON] r/${ep.sub} 异常:`, e instanceof Error ? e.message : e);
     }
@@ -181,7 +187,7 @@ async function fetchViaPushshift(): Promise<any[]> {
 }
 
 // -------------------------------------------------------
-// 主入口：依次尝试三种策略，任意一种成功即可
+// 主入口：两种策略并行，25秒总超时保护
 // -------------------------------------------------------
 export async function crawlReddit() {
   const startTime = Date.now();
@@ -189,10 +195,15 @@ export async function crawlReddit() {
   try {
     console.log('[Reddit] Starting with multi-strategy fallback...');
 
-    // 三种策略并行执行，取结果最多的那个
-    const [rssResults, searchResults] = await Promise.all([
-      fetchViaRSS().catch(() => []),
-      fetchViaSearch().catch(() => []),
+    // 两种策略并行，各自内部有 8s 超时，整体加 25s 保险
+    const [rssResults, searchResults] = await Promise.race([
+      Promise.all([
+        fetchViaRSS().catch(() => []),
+        fetchViaSearch().catch(() => []),
+      ]),
+      new Promise<[any[], any[]]>((_, reject) =>
+        setTimeout(() => reject(new Error('Reddit整体超时（25s）')), 25000)
+      ),
     ]);
 
     console.log(`[Reddit] RSS: ${rssResults.length}, JSON-API: ${searchResults.length}`);
@@ -208,15 +219,14 @@ export async function crawlReddit() {
       }
     }
 
-    // 如果前两个都失败，再尝试 Pushshift
     if (allPosts.length === 0) {
-      console.log('[Reddit] RSS+Search 均无结果，尝试 Pushshift...');
-      const pushResults = await fetchViaPushshift();
+      console.log('[Reddit] RSS+JSON 均无结果，尝试 Pushshift...');
+      const pushResults = await fetchViaPushshift().catch(() => []);
       allPosts.push(...pushResults);
     }
 
     if (allPosts.length === 0) {
-      const msg = 'RSS、Search、Pushshift 三种策略均失败（Reddit 屏蔽了所有请求路径）';
+      const msg = 'RSS、JSON API、Pushshift 三种策略均失败（Reddit 屏蔽了 Vercel IP）';
       console.warn(`[Reddit] ${msg}`);
       await logCrawl({
         source: 'reddit', status: 'failed',
