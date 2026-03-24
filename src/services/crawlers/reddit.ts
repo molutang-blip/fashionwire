@@ -195,6 +195,25 @@ export async function crawlReddit() {
   try {
     console.log('[Reddit] Starting with multi-strategy fallback...');
 
+    // 先快速测试 Reddit 是否可访问
+    const pingOk = await fetch('https://www.reddit.com/r/fashion/hot/.rss?limit=1', {
+      headers: { 'User-Agent': 'FashionWire/1.0' },
+      signal: AbortSignal.timeout(5000),
+    }).then(r => {
+      console.log(`[Reddit] 连通性测试: HTTP ${r.status}`);
+      return r.ok || r.status === 429; // 429=限速但可达
+    }).catch(e => {
+      console.warn('[Reddit] 连通性测试失败:', e.message);
+      return false;
+    });
+
+    if (!pingOk) {
+      const msg = 'Reddit 网络不可达（Vercel IP 被全面封锁），跳过Reddit数据源';
+      console.warn(`[Reddit] ${msg}`);
+      await logCrawl({ source: 'reddit', status: 'failed', items_count: 0, error_message: msg, duration_ms: Date.now() - startTime });
+      return { success: false, count: 0, error: msg };
+    }
+
     // 两种策略并行，各自内部有 8s 超时，整体加 25s 保险
     const [rssResults, searchResults] = await Promise.race([
       Promise.all([
